@@ -1,6 +1,7 @@
 package com.example.codeplayer.rahat_cfd;
 
 import android.Manifest;
+import android.arch.persistence.room.Room;
 import android.bluetooth.BluetoothAdapter;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -46,9 +47,14 @@ import java.util.Set;
 public class MainActivity extends AppCompatActivity {
 
     private ConnectionsClient mConnectionsClient;
-    private  final Map<String,Endpoint> mDiscoveredEndpoints  = new HashMap<>();
-    private final Map<String, Endpoint> mPendingConnections = new HashMap<>();
-    private final Map<String, Endpoint> mEstablishedConnections = new HashMap<>();
+//    private  final Map<String,Endpoint> mDiscoveredEndpoints  = new HashMap<>();
+//    private final Map<String, Endpoint> mPendingConnections = new HashMap<>();
+//    private final Map<String, Endpoint> mEstablishedConnections = new HashMap<>();
+
+
+    //initialize DB object
+    private static final String DATABASE_NAME = "m_db";
+    private AppDatabase appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, DATABASE_NAME).fallbackToDestructiveMigration().build();
 
     BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
     String deviceName = myDevice.getName();
@@ -274,48 +280,4 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
 
-
-    //---------------------------------------------------------------------
-
-    //Representing a device as a class
-
-    protected static class Endpoint {
-        @NonNull
-        private final String id;
-        @NonNull private final String name;
-
-        private Endpoint(@NonNull String id, @NonNull String name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        @NonNull
-        public String getId() {
-            return id;
-        }
-
-        @NonNull
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj != null && obj instanceof Endpoint) {
-                Endpoint other = (Endpoint) obj;
-                return id.equals(other.id);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            return id.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return String.format("Endpoint{id=%s, name=%s}", id, name);
-        }
-    }
 }
