@@ -17,4 +17,38 @@ public class messageStruct {
     @ColumnInfo(name = "message")
     private String message;
 
+
+    public void setUserID(int id){
+        this.userid = id;
+    }
+
+
+    public void setUserName(String username){
+        this.username = username;
+    }
+
+
+    public void setMessage(String message){
+        this.message = message;
+    }
+
+    public int getUserid(){
+        return userid;
+    }
+
+    public String getUsername(){
+        return username;
+    }
+
+    public String getMessage(){
+        return message;
+    }
+
+
+
+
+
 }
+
+
+
