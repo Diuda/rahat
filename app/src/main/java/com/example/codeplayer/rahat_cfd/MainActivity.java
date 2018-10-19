@@ -41,6 +41,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     //initialize DB object
-    private static final String DATABASE_NAME = "m_db";
-    private AppDatabase appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, DATABASE_NAME).fallbackToDestructiveMigration().build();
 
     BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
     String deviceName = myDevice.getName();
@@ -85,6 +84,10 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
             checkPermission();
         }
+
+
+//        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, DATABASE_NAME).fallbackToDestructiveMigration().build();
+        //DatabaseInitializer.populateAsync(appDatabase);
         connectionsList = findViewById(R.id.connectionsList);
         mConnectionsClient = Nearby.getConnectionsClient(this);
         adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,listItems);
@@ -279,5 +282,8 @@ public class MainActivity extends AppCompatActivity {
                     // Payload progress has updated.
                 }
             };
+
+
+
 
 }
