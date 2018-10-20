@@ -55,6 +55,11 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
+    BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
+    String deviceName = myDevice.getName();
+    FragmentManager fm = getSupportFragmentManager();
+    connectionFragment cf;
+    ConnectionsClient mConnectionsClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkPermission();
         }
+        mConnectionsClient =  Nearby.getConnectionsClient(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -152,5 +158,160 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 123);
     }
     //----------------------------------------
+
+
+
+
+
+    protected void advertise(){
+
+        mConnectionsClient.startAdvertising(deviceName,"com.paddy",mConnectionLifecycleCallback, new AdvertisingOptions(Strategy.P2P_CLUSTER))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unUsedResult) {
+
+                        Log.i("CODEFUNDO","Advertising now -> " + deviceName);
+
+                    }
+                });
+    }
+
+    protected void discover(){
+        mConnectionsClient.startDiscovery("com.paddy",mEndpointDiscoveryCallback,new DiscoveryOptions(Strategy.P2P_CLUSTER)).addOnSuccessListener(
+                new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        Log.i("CODEFUNDO","Discovering now");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                Log.i("CODEFUNDO","Discovering failed : -> " + e.toString());
+            }
+        });
+
+    }
+
+    protected void connect(String advertiserID){
+
+        mConnectionsClient.requestConnection(deviceName,advertiserID,mConnectionLifecycleCallback);
+
+    }
+
+
+
+    // ----------------------- Discovery Callback-----------------------------------
+    private final EndpointDiscoveryCallback mEndpointDiscoveryCallback=
+            new EndpointDiscoveryCallback() {
+                @Override
+                public void onEndpointFound(
+                        String endpointId, DiscoveredEndpointInfo discoveredEndpointInfo) {
+                    Log.i("CODEFUNDO","FOUND ENDPOINT: " + endpointId);
+                    cf = (connectionFragment)getSupportFragmentManager().findFragmentById(R.id.screen_area);
+                    cf.listItems.add(discoveredEndpointInfo.getEndpointName());
+                    cf.adapter.notifyDataSetChanged();
+
+
+
+                }
+
+                @Override
+                public void onEndpointLost(String endpointId) {
+                    // A previously discovered endpoint has gone away.
+                    Log.i("CODEFUNDO"," ENDPOINT LOST: " + endpointId);
+                }
+            };
+
+
+
+
+
+
+
+
+    //--------------------------------------------------------------------------------
+
+
+    // -----------------------Callbacks for connection to devices --------------------------
+
+    private final ConnectionLifecycleCallback mConnectionLifecycleCallback =
+            new ConnectionLifecycleCallback() {
+                @Override
+                public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
+                    // Automatically accept the connection on both sides.
+                    mConnectionsClient.acceptConnection(endpointId, mPayloadCallback);
+                }
+
+                @Override
+                public void onConnectionResult(String endpointId, ConnectionResolution result) {
+                    switch (result.getStatus().getStatusCode()) {
+                        case ConnectionsStatusCodes.STATUS_OK:
+
+                            Log.i("CODEFUNDO","SUCCESFFULL connection");
+
+                            chatFragment cft = new chatFragment();
+                            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.screen_area,cft);
+
+                            // We're connected! Can now start sending and receiving data.
+                            break;
+                        case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
+
+
+
+                            break;
+                        default:
+                            // The connection was broken before it was accepted.
+                            break;
+                    }
+                }
+
+                @Override
+                public void onDisconnected(String endpointId) {
+
+                    // We've been disconnected from this endpoint. No more data can be
+                    // sent or received.
+
+                }
+            };
+
+    private final PayloadCallback mPayloadCallback =
+            new PayloadCallback() {
+                @Override
+                public void onPayloadReceived(String endpointId, Payload payload) {
+
+                    Log.i("CODEFUNDO","PAYLOAD Receive called");
+                    String data = null;
+                    try {
+                        data = new String(payload.asBytes(),"UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                @Override
+                public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
+                    // Payload progress has updated.
+                }
+            };
+
+    protected  void sendData(String data){
+
+
+        try {
+            mConnectionsClient.sendPayload(new ArrayList<String>(cf.connectedList),Payload.fromBytes(data.getBytes("UTF-8")));
+        } catch (UnsupportedEncodingException e) {
+
+            Log.e("CODEFUNDO","ERROR in sending " + e.toString());
+            e.printStackTrace();
+        }
+    }
+
+    //---------------------------------------------------------------------------
+
+
 
 }
