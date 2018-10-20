@@ -30,6 +30,10 @@ public class messageStruct {
     }
 
 
+    public void setMessageid(String messageid){
+        this.messageid = messageid;
+    }
+
 
 
     public String getMessageid(){
