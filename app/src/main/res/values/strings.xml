@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">rahat-cfd</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="hint_word">Message.. </string>
+    <string name="button_save">Save</string>
+    <string name="empty_not_saved">Message not saved because it is empty.</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
