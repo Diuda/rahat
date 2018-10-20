@@ -46,6 +46,9 @@ import java.util.Set;
 public class MainActivity extends AppCompatActivity {
 
     private ConnectionsClient mConnectionsClient;
+    private  final Map<String,Endpoint> mDiscoveredEndpoints  = new HashMap<>();
+    private final Map<String, Endpoint> mPendingConnections = new HashMap<>();
+    private final Map<String, Endpoint> mEstablishedConnections = new HashMap<>();
 
     BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
     String deviceName = myDevice.getName();
