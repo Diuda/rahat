@@ -6,13 +6,15 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import java.util.UUID;
+
 @Entity
 public class messageStruct {
 
     @PrimaryKey
     @NonNull
-    @ColumnInfo(name = "userid")
-    private int userid;
+    @ColumnInfo(name = "messageid")
+    private String messageid;
 
     @ColumnInfo(name = "user")
     private String username;
@@ -21,37 +23,10 @@ public class messageStruct {
     private String message;
 
 
-    public messageStruct(@NonNull int userid, String username, String message){
-        this.userid = userid;
+    public messageStruct( String username, String message){
+        this.messageid = UUID.randomUUID().toString();
         this.username = username;
         this.message = message;
-    }
-
-
-    public void setUserid(int id){
-        this.userid = id;
-    }
-
-
-    public void setUsername(String username){
-        this.username = username;
-    }
-
-
-    public void setMessage(String message){
-        this.message = message;
-    }
-
-    public int getUserid(){
-        return userid;
-    }
-
-    public String getUsername(){
-        return username;
-    }
-
-    public String getMessage(){
-        return message;
     }
 
 
