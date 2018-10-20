@@ -32,6 +32,21 @@ public class messageStruct {
 
 
 
+    public String getMessageid(){
+        return messageid;
+    }
+
+    public String getUsername(){
+        return username;
+    }
+
+    public String getMessage(){
+        return message;
+    }
+
+
+
+
 
 }
 
