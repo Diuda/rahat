@@ -196,8 +196,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     protected void connect(String advertiserID){
 
-        mConnectionsClient.requestConnection(deviceName,advertiserID,mConnectionLifecycleCallback);
+        mConnectionsClient.requestConnection(deviceName,advertiserID,mConnectionLifecycleCallback).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.i("CFDPP","Successfull request");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
+
+                Log.i("CFDPP","Failed af on connection request" + e.toString());
+            }
+        });
+        Log.i("CFDPP","Request Connection completed");
     }
 
 
@@ -210,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         String endpointId, DiscoveredEndpointInfo discoveredEndpointInfo) {
                     Log.i("CODEFUNDO","FOUND ENDPOINT: " + endpointId);
                     cf = (connectionFragment)getSupportFragmentManager().findFragmentById(R.id.screen_area);
-                    cf.listItems.add(discoveredEndpointInfo.getEndpointName());
+                    cf.listItems.add(endpointId);
                     cf.adapter.notifyDataSetChanged();
 
 
@@ -241,6 +253,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
                     // Automatically accept the connection on both sides.
+
+                    Log.i("CODEFUNDO","Initiated connection");
+
                     mConnectionsClient.acceptConnection(endpointId, mPayloadCallback);
                 }
 
@@ -251,18 +266,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             Log.i("CODEFUNDO","SUCCESFFULL connection");
 
+                            cf.connectedList.add(endpointId);
                             chatFragment cft = new chatFragment();
                             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.screen_area,cft);
+                            ft.replace(R.id.screen_area,cft,"FragmentTAG");
+                            ft.commit();
+
 
                             // We're connected! Can now start sending and receiving data.
                             break;
                         case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
 
-
+                            Log.i("CODEFUNDO","Connection Rejected");
 
                             break;
                         default:
+
+                            Log.i("CODEFUNDO","Connection default Rejected");
                             // The connection was broken before it was accepted.
                             break;
                     }
@@ -273,6 +293,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     // We've been disconnected from this endpoint. No more data can be
                     // sent or received.
+
+                    Log.i("CODEFUNDO","Disconnected connection");
+
 
                 }
             };
@@ -285,7 +308,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Log.i("CODEFUNDO","PAYLOAD Receive called");
                     String data = null;
                     try {
+                        chatFragment ct = (chatFragment) getSupportFragmentManager().findFragmentById(R.id.screen_area);
                         data = new String(payload.asBytes(),"UTF-8");
+                        ct.messageAdapter.add(new Message(data,new MemberData("Divs", "Red"),false));
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
@@ -298,10 +323,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             };
 
-    protected  void sendData(String data){
+    protected  void sendData(String data,MessageAdapter messageAdapter){
 
 
         try {
+            messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
+            Log.i("CFDPP","Message Adapter completed");
             mConnectionsClient.sendPayload(new ArrayList<String>(cf.connectedList),Payload.fromBytes(data.getBytes("UTF-8")));
         } catch (UnsupportedEncodingException e) {
 
