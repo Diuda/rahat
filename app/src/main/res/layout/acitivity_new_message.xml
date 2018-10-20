@@ -5,17 +5,6 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/uid"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-light"
-        android:hint="uid"
-        android:inputType="textAutoComplete"
-        android:padding="6dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"
-        android:textSize="18sp" />
-    <EditText
         android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
