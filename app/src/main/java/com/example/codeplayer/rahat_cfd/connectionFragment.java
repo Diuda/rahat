@@ -73,7 +73,7 @@ public class connectionFragment  extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-       return  inflater.inflate(R.layout.frament_connections,null);
+        return  inflater.inflate(R.layout.frament_connections,null);
 
     }
 
