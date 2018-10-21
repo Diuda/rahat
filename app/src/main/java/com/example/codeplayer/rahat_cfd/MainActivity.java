@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FragmentManager fm = getSupportFragmentManager();
     connectionFragment cf;
     ConnectionsClient mConnectionsClient;
+    Map<String,String> endpointUser ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             checkPermission();
         }
         mConnectionsClient =  Nearby.getConnectionsClient(this);
+        endpointUser = new HashMap<String, String>();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -221,11 +223,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void onEndpointFound(
                         String endpointId, DiscoveredEndpointInfo discoveredEndpointInfo) {
                     Log.i("CODEFUNDO","FOUND ENDPOINT: " + endpointId);
-                    cf = (connectionFragment)getSupportFragmentManager().findFragmentById(R.id.screen_area);
-                    cf.listItems.add(endpointId);
-                    cf.adapter.notifyDataSetChanged();
+                    Fragment f;
+                    f = getSupportFragmentManager().findFragmentById(R.id.screen_area);
+                    if(f instanceof connectionFragment) {
+                        cf = (connectionFragment) getSupportFragmentManager().findFragmentById(R.id.screen_area);
+                        cf.listItems.add(endpointId);
+                        cf.adapter.notifyDataSetChanged();
+                         }
+                         endpointUser.put(endpointId,discoveredEndpointInfo.getEndpointName());
+                    Toast.makeText(getApplicationContext(),"Found new user in vicinity!",Toast.LENGTH_SHORT).show();
 
 
+                    // ----Change to connection screen
 
                 }
 
@@ -310,7 +319,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     try {
                         chatFragment ct = (chatFragment) getSupportFragmentManager().findFragmentById(R.id.screen_area);
                         data = new String(payload.asBytes(),"UTF-8");
-                        ct.messageAdapter.add(new Message(data,new MemberData("Divs", "Red"),false));
+                        Set<String> connections =  new HashSet<String>();
+
+                        for (String connectionID: cf.connectedList) {
+
+                            if(!connectionID.equals(endpointId)){
+
+                                connections.add(connectionID);
+                            }
+
+                        }
+                        Log.i("CFDPPP",connections.toString());
+
+                        ct.messageAdapter.add(new Message(data,new MemberData(endpointUser.get(endpointId), "Red"),false));
+                        if(!connections.isEmpty())
+                        sendData(data,ct.messageAdapter,connections);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
@@ -323,13 +346,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             };
 
-    protected  void sendData(String data,MessageAdapter messageAdapter){
+    protected  void sendData(String data,MessageAdapter messageAdapter,Set<String> connectedList){
 
 
         try {
+            if(connectedList==null){
+                connectedList = cf.connectedList;
+            }
             messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
             Log.i("CFDPP","Message Adapter completed");
-            mConnectionsClient.sendPayload(new ArrayList<String>(cf.connectedList),Payload.fromBytes(data.getBytes("UTF-8")));
+            mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes(data.getBytes("UTF-8")));
         } catch (UnsupportedEncodingException e) {
 
             Log.e("CODEFUNDO","ERROR in sending " + e.toString());

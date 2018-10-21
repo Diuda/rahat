@@ -50,7 +50,7 @@ public class chatFragment extends Fragment {
         public void onClick(View v) {
             String message = messageToSend.getText().toString();
 
-            act.sendData(message,messageAdapter);
+            act.sendData(message,messageAdapter,null);
 
             //Logic to send message
 
