@@ -48,6 +48,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -319,6 +320,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     try {
                         chatFragment ct = (chatFragment) getSupportFragmentManager().findFragmentById(R.id.screen_area);
                         data = new String(payload.asBytes(),"UTF-8");
+
+                        String [] parsedData = data.split("#");
+                        Log.i("DATATAG",data);
+                        Log.i("Parsed 1 ",parsedData[0]);
+
+                        Log.i("Parsed 2 ",parsedData[1]);
+                        long sendTimeStamp = Long.parseLong(parsedData[1]);
+                        long curTimeStamp = new Date().getTime();
+                        long timeDiff = curTimeStamp-sendTimeStamp;
+                        double distance = 299792458*timeDiff*1000;
+
+                        Log.i("DISTANCE Calculated",Double.toString(distance));
                         Set<String> connections =  new HashSet<String>();
 
                         for (String connectionID: cf.connectedList) {
@@ -331,9 +344,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                         Log.i("CFDPPP",connections.toString());
 
-                        ct.messageAdapter.add(new Message(data,new MemberData(endpointUser.get(endpointId), "Red"),false));
+                        ct.messageAdapter.add(new Message(parsedData[0],new MemberData(endpointUser.get(endpointId), "Red"),false));
                         if(!connections.isEmpty())
-                        sendData(data,ct.messageAdapter,connections);
+                        sendData(parsedData[1],ct.messageAdapter,connections);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
@@ -355,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
             Log.i("CFDPP","Message Adapter completed");
-            mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes(data.getBytes("UTF-8")));
+            mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((data+"#"+new Date().getTime()).getBytes("UTF-8")));
         } catch (UnsupportedEncodingException e) {
 
             Log.e("CODEFUNDO","ERROR in sending " + e.toString());
