@@ -17,6 +17,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.ArraySet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,6 +63,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     connectionFragment cf;
     ConnectionsClient mConnectionsClient;
     Map<String,String> endpointUser ;
+    Map<String,Double> distanceMapper;
+    ParsedMessagePayload parser;
+    AckParser ackParser;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +77,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkPermission();
         }
+        //-----------------------------------------------------------
+        //--------__ Instantiating Objects__---------------------------------
         mConnectionsClient =  Nearby.getConnectionsClient(this);
         endpointUser = new HashMap<String, String>();
+        parser = new ParsedMessagePayload();
+        ackParser = new AckParser();
+        distanceMapper = new HashMap<>();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -85,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
     }
     @Override
     public void onBackPressed() {
@@ -318,20 +331,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Log.i("CODEFUNDO","PAYLOAD Receive called");
                     String data = null;
                     try {
+
+                        //---------------FIX ASAP------------------------------
+                        //To be corrected: Will crash if message appears and
+                        //User is on Connections screen
                         chatFragment ct = (chatFragment) getSupportFragmentManager().findFragmentById(R.id.screen_area);
-                        data = new String(payload.asBytes(),"UTF-8");
+                        //---------------------------------------------------
 
-                        String [] parsedData = data.split("#");
-                        Log.i("DATATAG",data);
-                        Log.i("Parsed 1 ",parsedData[0]);
+                        //Parsing initially to check for ACK
+                        parser.parseData(payload);
+                        boolean isAck = parser.isAck();
 
-                        Log.i("Parsed 2 ",parsedData[1]);
-                        long sendTimeStamp = Long.parseLong(parsedData[1]);
-                        long curTimeStamp = new Date().getTime();
-                        long timeDiff = curTimeStamp-sendTimeStamp;
-                        double distance = 299792458*timeDiff*1000;
+                        if(isAck){
 
-                        Log.i("DISTANCE Calculated",Double.toString(distance));
+
+                            ackParser.parseAckMessage(payload);
+                            ackParser.findDistance();
+                            //Add code to calculate Mean and Variance
+                            //Get location in Real Time
+                            return;
+
+                        }
+
+
+                        //------- FIX---------------------------
+                        //Change to use a better Data Structure
+
+
+                        HashSet<String> endpointConnection = new HashSet<String>();
+                        endpointConnection.add(endpointId);
+                        sendData(null,ct.messageAdapter,endpointConnection,true);
+                        //----------------------------------
+
+
+                        //If not an ack send ack
+                        String parsedData = parser.getData();
+
+
+
                         Set<String> connections =  new HashSet<String>();
 
                         for (String connectionID: cf.connectedList) {
@@ -344,10 +381,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                         Log.i("CFDPPP",connections.toString());
 
-                        ct.messageAdapter.add(new Message(parsedData[0],new MemberData(endpointUser.get(endpointId), "Red"),false));
+                        ct.messageAdapter.add(new Message(parsedData,new MemberData(endpointUser.get(endpointId), "Red"),false));
                         if(!connections.isEmpty())
-                        sendData(parsedData[1],ct.messageAdapter,connections);
-                    } catch (UnsupportedEncodingException e) {
+                        sendData(parsedData,ct.messageAdapter,connections,false);
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -359,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             };
 
-    protected  void sendData(String data,MessageAdapter messageAdapter,Set<String> connectedList){
+    protected  void sendData(String data,MessageAdapter messageAdapter,Set<String> connectedList,boolean isAck){
 
 
         try {
@@ -368,7 +405,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
             Log.i("CFDPP","Message Adapter completed");
-            mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((data+"#"+new Date().getTime()).getBytes("UTF-8")));
+            String ackString  = String.valueOf(isAck);
+            if(!isAck)
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((ackString+"#"+data+"#"+new Date().getTime()).getBytes("UTF-8")));
+            else {
+                String currentTime =  Long.toString(new Date().getTime());
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((ackString+"#"+parser.getSendStamp()+parser.getReceiveStamp()+currentTime).getBytes("UTF-8")));
+            }
         } catch (UnsupportedEncodingException e) {
 
             Log.e("CODEFUNDO","ERROR in sending " + e.toString());
