@@ -48,6 +48,8 @@ public class chatFragment extends Fragment {
     private View.OnClickListener sendMessageListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            messageToSend.setText("");
             String message = messageToSend.getText().toString();
 
             act.sendData(message,messageAdapter,null,false);
