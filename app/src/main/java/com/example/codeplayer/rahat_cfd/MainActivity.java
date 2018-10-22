@@ -1,6 +1,7 @@
 package com.example.codeplayer.rahat_cfd;
 
 import android.Manifest;
+import android.arch.lifecycle.ViewModelProviders;
 import android.bluetooth.BluetoothAdapter;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -55,7 +56,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+
+
+    private MessageViewModel messageViewModel;
 
     BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
     String deviceName = myDevice.getName();
@@ -77,8 +83,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkPermission();
         }
+
+
+
         //-----------------------------------------------------------
         //--------__ Instantiating Objects__---------------------------------
+
+        messageViewModel = ViewModelProviders.of(this).get(MessageViewModel.class);
         mConnectionsClient =  Nearby.getConnectionsClient(this);
         endpointUser = new HashMap<String, String>();
         parser = new ParsedMessagePayload();
@@ -339,6 +350,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         //To be corrected: Will crash if message appears and
                         //User is on Connections screen
                         chatFragment ct = (chatFragment) getSupportFragmentManager().findFragmentById(R.id.screen_area);
+
                         //---------------------------------------------------
 
                         //Parsing initially to check for ACK
@@ -371,6 +383,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         //If not an ack send ack
                         String parsedData = parser.getData();
+
+                        messageStruct messageStruct = new messageStruct(endpointUser.get(endpointId),parsedData);
+
+                        messageViewModel.insert(messageStruct);
 
 
 
@@ -412,7 +428,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String ackString  = String.valueOf(isAck);
             Log.i("ACKVAL-SENDING",ackString);
             if(!isAck) {
+                messageStruct messageStruct = new messageStruct(deviceName,data);
+                messageViewModel.insert(messageStruct);
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((ackString + "#" + data + "#" + new Date().getTime()).getBytes("UTF-8")));
+
                 messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
                 Log.i("CFDPP","Message Adapter completed");
 
