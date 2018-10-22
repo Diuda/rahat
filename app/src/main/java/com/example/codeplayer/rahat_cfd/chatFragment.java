@@ -1,5 +1,7 @@
 package com.example.codeplayer.rahat_cfd;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +14,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import java.util.List;
+
 public class chatFragment extends Fragment {
 
     private EditText messageToSend;
@@ -20,6 +24,7 @@ public class chatFragment extends Fragment {
     private ListView messagesView;
     private ImageButton sendButton;
     MainActivity act;
+    private MessageViewModel messageViewModel;
 
     @Nullable
     @Override
@@ -40,6 +45,18 @@ public class chatFragment extends Fragment {
 ////
         sendButton.setOnClickListener(sendMessageListener);
         act = ((MainActivity)getActivity());
+
+
+        messageViewModel = ViewModelProviders.of(this).get(MessageViewModel.class);
+
+               messageViewModel.getmAllMessage().observe(this, new Observer<List<messageStruct>>() {
+            @Override
+            public void onChanged(@Nullable List<messageStruct> messageStructs) {
+                messageAdapter.setWords(messageStructs);
+            }
+        });
+
+
 
 
 
