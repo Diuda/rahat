@@ -432,7 +432,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 messageViewModel.insert(messageStruct);
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((ackString + "#" + data + "#" + new Date().getTime()).getBytes("UTF-8")));
 
-                messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
+//                messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
                 Log.i("CFDPP","Message Adapter completed");
 
             }
