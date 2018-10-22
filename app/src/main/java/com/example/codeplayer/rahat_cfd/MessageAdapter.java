@@ -17,6 +17,7 @@ public class MessageAdapter extends BaseAdapter {
 
     List<Message> messages = new ArrayList<Message>();
     Context context;
+    private List<messageStruct> mMessages;
 
     public MessageAdapter(Context context) {
         this.context = context;
@@ -41,6 +42,12 @@ public class MessageAdapter extends BaseAdapter {
     @Override
     public long getItemId(int i) {
         return i;
+    }
+
+
+    void setWords(List<messageStruct> words){
+        mMessages = words;
+        notifyDataSetChanged();
     }
 
     @Override
