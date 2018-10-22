@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class chatFragment extends Fragment {
@@ -47,14 +49,31 @@ public class chatFragment extends Fragment {
         act = ((MainActivity)getActivity());
 
 
-        messageViewModel = ViewModelProviders.of(this).get(MessageViewModel.class);
+        messageViewModel = ViewModelProviders.of(getActivity()).get(MessageViewModel.class);
 
-               messageViewModel.getmAllMessage().observe(this, new Observer<List<messageStruct>>() {
+        Log.i("databasek]chal", "sahoo story dekh");
+        messageViewModel.getmAllMessage().observe(getActivity(), new Observer<List<messageStruct>>() {
             @Override
             public void onChanged(@Nullable List<messageStruct> messageStructs) {
-                messageAdapter.setWords(messageStructs);
-            }
+
+                if(messageStructs.isEmpty()){
+
+
+                }
+
+                else {
+                    Log.i("databasek]chal", String.valueOf(messageStructs.size()));
+
+                    messageAdapter.setWords(messageStructs);
+                }
+
+                }
+
+
+
         });
+
+
 
 
 
