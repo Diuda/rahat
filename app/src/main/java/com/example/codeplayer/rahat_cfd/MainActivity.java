@@ -147,6 +147,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragment = new connectionFragment();
 
         }
+        else if(id==R.id.nav_chat){
+            fragment = new MapFragment();
+        }
 
         if(fragment!=null){
             FragmentManager fragmentManager = getSupportFragmentManager();
