@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,7 @@ public class chatFragment extends Fragment {
     final private String SERVICE_ID = "RAHAT_CFD";
     private ListView messagesView;
     private ImageButton sendButton;
+    private RecyclerView recyclerView;
     MainActivity act;
     private MessageViewModel messageViewModel;
 
@@ -39,11 +42,19 @@ public class chatFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+        recyclerView = view.findViewById(R.id.messagerecycleview);
+        final MessageListAdapter adapter = new MessageListAdapter(getActivity());
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+
+
         messageToSend = view.findViewById(R.id.messageToSend);
-        messageAdapter = new MessageAdapter(getActivity());
-        messagesView =  view.findViewById(R.id.messages_view);
+//        messageAdapter = new MessageAdapter(getActivity());
+//        messagesView =  view.findViewById(R.id.messages_view);
         sendButton =  (ImageButton) view.findViewById(R.id.sendButton);
-        messagesView.setAdapter(messageAdapter);
+//        messagesView.setAdapter(messageAdapter);
 ////
         sendButton.setOnClickListener(sendMessageListener);
         act = ((MainActivity)getActivity());
@@ -64,7 +75,7 @@ public class chatFragment extends Fragment {
                 else {
                     Log.i("databasek]chal", String.valueOf(messageStructs.size()));
 
-                    messageAdapter.setWords(messageStructs);
+                    adapter.setWords(messageStructs);
                 }
 
                 }
