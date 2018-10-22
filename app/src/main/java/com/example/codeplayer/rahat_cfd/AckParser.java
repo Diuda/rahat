@@ -1,6 +1,12 @@
 package com.example.codeplayer.rahat_cfd;
 
+import android.util.Log;
+
 import com.google.android.gms.nearby.connection.Payload;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Date;
 
 public class AckParser {
 
@@ -13,19 +19,26 @@ public class AckParser {
 
 
 
-    private void getTimes(String t1,String t2,String t3,String t4){
+    private void getTimes(String t1,String t2,String t3){
 
         this.t1 = Long.parseLong(t1);
         this.t2 = Long.parseLong(t2);
         this.t3 = Long.parseLong(t3);
-        this.t4 = Long.parseLong(t4);
+        this.t4 = (new Date().getTime());
 
     }
     void  parseAckMessage(Payload payload){
 
-        String  payloadString = payload.asBytes().toString();
+        String  payloadString = null;
+        try {
+            payloadString = new String(payload.asBytes(),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         String [] parsedPayload = payloadString.split("#");
-        getTimes(parsedPayload[1],parsedPayload[2],parsedPayload[3],parsedPayload[4]);
+
+        Log.i("PARSEACK", Arrays.toString(parsedPayload));
+        getTimes(parsedPayload[1],parsedPayload[2],parsedPayload[3]);
 
     }
 

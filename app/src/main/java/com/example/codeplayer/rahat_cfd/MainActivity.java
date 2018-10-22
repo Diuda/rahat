@@ -349,7 +349,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
                             ackParser.parseAckMessage(payload);
-                            ackParser.findDistance();
+                            double distance = ackParser.findDistance();
+                            Log.i("DISTANCECFD",Double.toString(distance));
                             //Add code to calculate Mean and Variance
                             //Get location in Real Time
                             return;
@@ -363,6 +364,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         HashSet<String> endpointConnection = new HashSet<String>();
                         endpointConnection.add(endpointId);
+                        Log.i("ACKENDPT",endpointConnection.toString());
                         sendData(null,ct.messageAdapter,endpointConnection,true);
                         //----------------------------------
 
@@ -406,14 +408,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if(connectedList==null){
                 connectedList = cf.connectedList;
             }
-            messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
-            Log.i("CFDPP","Message Adapter completed");
+
             String ackString  = String.valueOf(isAck);
-            if(!isAck)
-                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((ackString+"#"+data+"#"+new Date().getTime()).getBytes("UTF-8")));
+            Log.i("ACKVAL-SENDING",ackString);
+            if(!isAck) {
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((ackString + "#" + data + "#" + new Date().getTime()).getBytes("UTF-8")));
+                messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
+                Log.i("CFDPP","Message Adapter completed");
+
+            }
             else {
+
                 String currentTime =  Long.toString(new Date().getTime());
-                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((ackString+"#"+parser.getSendStamp()+parser.getReceiveStamp()+currentTime).getBytes("UTF-8")));
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((ackString+"#"+parser.getSendStamp()+"#"+parser.getReceiveStamp()+"#"+currentTime).getBytes("UTF-8")));
             }
         } catch (UnsupportedEncodingException e) {
 

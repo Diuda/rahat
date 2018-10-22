@@ -49,6 +49,10 @@ public class MessageAdapter extends BaseAdapter {
         LayoutInflater messageInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         Message message = messages.get(i);
 
+//        if(messageIsMapBased){
+//
+//            convertView = messageInflater.inflate((R.layout.location_message),null);
+//        }
         if (message.isBelongsToCurrentUser()) {
             convertView = messageInflater.inflate(R.layout.my_message, null);
             holder.messageBody = (TextView) convertView.findViewById(R.id.message_body);

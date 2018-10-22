@@ -1,6 +1,12 @@
 package com.example.codeplayer.rahat_cfd;
 
+import android.util.Log;
+
 import com.google.android.gms.nearby.connection.Payload;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Date;
 
 public class ParsedMessagePayload {
 
@@ -23,6 +29,7 @@ public class ParsedMessagePayload {
         public String getReceiveStamp(){
             return this.receiveStamp;
         }
+
         public boolean isAck(){
             return this.isAck;
         }
@@ -35,13 +42,21 @@ public class ParsedMessagePayload {
         }
         void parseData(Payload payload){
 
-            String  payloadString = payload.asBytes().toString();
+            String  payloadString = null;
+            try {
+                payloadString = new String(payload.asBytes(),"UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             String [] parsedPayload = payloadString.split("#");
+            Log.i("PayloadReceived",payloadString);
+            Log.i("PayloadReceived", Arrays.toString(parsedPayload));
             for(int i=0;i<parsedPayload.length;i++){
 
                 if(i==0){
 
                     this.isAck = Boolean.parseBoolean(parsedPayload[0]);
+
                     if(this.isAck==true)
                         return;
                 }
@@ -51,10 +66,11 @@ public class ParsedMessagePayload {
                 if(i==2){
                     this.sendStamp = parsedPayload[2];
                 }
-                if(i==3){
-                    this.receiveStamp = parsedPayload[3];
-                }
+
             }
+
+                this.receiveStamp = Long.toString(new Date().getTime());
+
         }
 
 

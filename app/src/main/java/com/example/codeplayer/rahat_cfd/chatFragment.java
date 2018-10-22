@@ -49,9 +49,9 @@ public class chatFragment extends Fragment {
         @Override
         public void onClick(View v) {
 
-            messageToSend.setText("");
-            String message = messageToSend.getText().toString();
 
+            String message = messageToSend.getText().toString();
+            messageToSend.setText("");
             act.sendData(message,messageAdapter,null,false);
 
             //Logic to send message
