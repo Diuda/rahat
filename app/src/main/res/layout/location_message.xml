@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
     app:cardBackgroundColor="#e0ffc6"
+    android:id="@+id/mapCard"
     app:cardCornerRadius="5dp">
 
     <LinearLayout
@@ -45,6 +46,7 @@
                 android:textSize="10sp" />
 
             <ImageView
+                android:id="@+id/mapImage"
                 android:layout_width="10dp"
                 android:layout_height="10dp"
                 android:layout_gravity="center_vertical"

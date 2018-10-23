@@ -2,28 +2,37 @@ package com.example.codeplayer.rahat_cfd;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private BluetoothAdapter myDevice;
     private String deviceName;
+    private Context context;
+
 
 
     private final LayoutInflater layoutInflater;
 
     private List<messageStruct> mMessages;
 
-    private class myMessageViewHolder extends RecyclerView.ViewHolder {
+    private class myMessageViewHolder extends RecyclerView.ViewHolder  {
 
         private final TextView messageItemView;
 
@@ -49,25 +58,56 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     }
 
-    private class mapMessageViewHolder extends RecyclerView.ViewHolder {
+    private class mapMessageViewHolder extends RecyclerView.ViewHolder implements  View.OnClickListener{
 
         private final TextView messageItemView;
         private final TextView timeItemView;
+        private final CardView cardView;
 
         private  mapMessageViewHolder(View itemView) {
             super(itemView);
             messageItemView = itemView.findViewById(R.id.message_body);
 
             timeItemView = itemView.findViewById(R.id.msgTime);
+
+            cardView = itemView.findViewById(R.id.mapCard);
+
+            cardView.setOnClickListener(this);
+
         }
 
+
+        @Override
+        public void onClick(View v) {
+//
+                String []coords = messageItemView.getText().toString().split(",");
+//                String strUri = "http://maps.google.com/maps?q=loc:" + coords[0] + "," + coords[1] + " (" + "Me" + ")";
+//
+            Log.i("CLICK HUA", Arrays.toString(coords));
+//                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(strUri));
+//
+//                intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+//                context.startActivity(intent);
+
+            String latitude = coords[0];
+            String longitude = coords[1];
+            String label = "Walia Chutiya hai";
+            String uriBegin = "geo:" + latitude + "," + longitude;
+            String query = latitude + "," + longitude + "(" + label + ")";
+            String encodedQuery = Uri.encode(query);
+            String uriString = uriBegin + "?q=" + encodedQuery + "&z=16";
+            Uri uri = Uri.parse(uriString);
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
+            context.startActivity(intent);
+
+        }
     }
 
     MessageListAdapter(Context context) {
         layoutInflater = LayoutInflater.from(context);
-
         myDevice = BluetoothAdapter.getDefaultAdapter();
         deviceName = myDevice.getName();
+        this.context = context;
 
     }
 
@@ -140,7 +180,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             return 2;
         }
 
-        if(message.getUsername().equals(deviceName)){
+        if(message.getMessageType()==0){
 
             return 0;
         }
