@@ -431,7 +431,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         try {
             if(connectedList==null){
+                if(cf==null){
+                    Toast.makeText(getApplicationContext(),"Please connect to atleast one peer",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 connectedList = cf.connectedList;
+                if(connectedList==null){
+                    Toast.makeText(getApplicationContext(),"Please connect to atleast one peer",Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
 
             String messageTypeString  = String.valueOf(messageType);
