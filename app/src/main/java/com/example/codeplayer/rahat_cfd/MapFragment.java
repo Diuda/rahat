@@ -35,6 +35,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     GoogleMap map;
     LocationManager lm;
 
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
