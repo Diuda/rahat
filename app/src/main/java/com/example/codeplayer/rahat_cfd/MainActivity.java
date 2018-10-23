@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragment = new connectionFragment();
 
         }
-        else if(id==R.id.nav_chat){
+        else if(id==R.id.nav_location){
             fragment = new MapFragment();
         }
 
@@ -355,9 +355,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         //Parsing initially to check for ACK
                         parser.parseData(payload);
-                        boolean isAck = parser.isAck();
+                        int messageType = parser.getMessageType();
 
-                        if(isAck){
+                        if(messageType==1){
 
 
                             ackParser.parseAckMessage(payload);
@@ -366,6 +366,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             //Add code to calculate Mean and Variance
                             //Get location in Real Time
                             return;
+
+                        }
+                        else if (messageType==2){
+
+                            messageStruct messageStruct = new messageStruct(endpointUser.get(endpointId),LocationParser.getLatitude()+","+LocationParser.getLongitude(),2);
+                            messageViewModel.insert(messageStruct);
+
+                            return;
+
+
 
                         }
 
@@ -377,15 +387,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         HashSet<String> endpointConnection = new HashSet<String>();
                         endpointConnection.add(endpointId);
                         Log.i("ACKENDPT",endpointConnection.toString());
-                        sendData(null,ct.messageAdapter,endpointConnection,true);
+                        sendData(null,ct.messageAdapter,endpointConnection,1);
                         //----------------------------------
 
 
                         //If not an ack send ack
                         String parsedData = parser.getData();
 
-                        messageStruct messageStruct = new messageStruct(endpointUser.get(endpointId),parsedData);
-
+                        messageStruct messageStruct = new messageStruct(endpointUser.get(endpointId),parsedData,0);
                         messageViewModel.insert(messageStruct);
 
 
@@ -402,9 +411,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                         Log.i("CFDPPP",connections.toString());
 
-                        ct.messageAdapter.add(new Message(parsedData,new MemberData(endpointUser.get(endpointId), "Red"),false));
+                        ct.messageAdapter.add(new Message(parsedData,new MemberData(endpointUser.get(endpointId), "Red"),0));
                         if(!connections.isEmpty())
-                        sendData(parsedData,ct.messageAdapter,connections,false);
+                        sendData(parsedData,ct.messageAdapter,connections,0);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -417,29 +426,46 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             };
 
-    protected  void sendData(String data,MessageAdapter messageAdapter,Set<String> connectedList,boolean isAck){
+    protected  void sendData(String data,MessageAdapter messageAdapter,Set<String> connectedList,int messageType){
 
 
         try {
             if(connectedList==null){
+                if(cf==null){
+                    Toast.makeText(getApplicationContext(),"Please connect to atleast one peer",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 connectedList = cf.connectedList;
+                if(connectedList==null){
+                    Toast.makeText(getApplicationContext(),"Please connect to atleast one peer",Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
 
-            String ackString  = String.valueOf(isAck);
-            Log.i("ACKVAL-SENDING",ackString);
-            if(!isAck) {
-                messageStruct messageStruct = new messageStruct(deviceName,data);
+            String messageTypeString  = String.valueOf(messageType);
+            Log.i("ACKVAL-SENDING",messageTypeString);
+            //Send user message data
+            if(messageType==0) {
+                messageStruct messageStruct = new messageStruct(deviceName,data,messageType);
                 messageViewModel.insert(messageStruct);
-                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((ackString + "#" + data + "#" + new Date().getTime()).getBytes("UTF-8")));
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString + "#" + data + "#" + new Date().getTime()).getBytes("UTF-8")));
 
 //                messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
                 Log.i("CFDPP","Message Adapter completed");
 
             }
-            else {
+            //Send Timestamp
+            else if(messageType==1) {
 
                 String currentTime =  Long.toString(new Date().getTime());
-                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((ackString+"#"+parser.getSendStamp()+"#"+parser.getReceiveStamp()+"#"+currentTime).getBytes("UTF-8")));
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString+"#"+parser.getSendStamp()+"#"+parser.getReceiveStamp()+"#"+currentTime).getBytes("UTF-8")));
+            }
+            //Send Location
+            else if(messageType==2){
+
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString+"#"+data).getBytes("UTF-8")));
+                messageStruct messageStruct = new messageStruct(deviceName,data,messageType);
+                messageViewModel.insert(messageStruct);
             }
         } catch (UnsupportedEncodingException e) {
 

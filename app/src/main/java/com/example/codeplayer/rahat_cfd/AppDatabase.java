@@ -9,7 +9,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-@Database(entities = {messageStruct.class}, version = 1)
+@Database(entities = {messageStruct.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract MessageDao MessageDao();

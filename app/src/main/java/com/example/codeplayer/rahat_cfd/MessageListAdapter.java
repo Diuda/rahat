@@ -1,5 +1,6 @@
 package com.example.codeplayer.rahat_cfd;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +12,8 @@ import java.util.List;
 
 public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.MessageViewHolder> {
 
-
+    BluetoothAdapter myDevice;
+    String deviceName;
     class MessageViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView messageItemView;
@@ -30,12 +32,26 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     MessageListAdapter(Context context) {
         layoutInflater = LayoutInflater.from(context);
 
+        myDevice = BluetoothAdapter.getDefaultAdapter();
+        deviceName = myDevice.getName();
+
     }
 
     @Override
     public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = layoutInflater.inflate(R.layout.my_message, parent, false);
-        return new MessageViewHolder(itemView);
+
+        if(viewType==0) {
+            View itemView = layoutInflater.inflate(R.layout.my_message, parent, false);
+            return new MessageViewHolder(itemView);
+        }
+        if(viewType==1){
+            View itemView = layoutInflater.inflate(R.layout.their_message,parent,false);
+            return  new MessageViewHolder(itemView);
+        }
+
+            View itemView = layoutInflater.inflate(R.layout.location_message,parent,false);
+            return new MessageViewHolder(itemView);
+
     }
 
 
@@ -65,8 +81,20 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     }
 
 
+    @Override
+    public int getItemViewType(int position) {
+        messageStruct message = mMessages.get(position);
+        if(message.getMessageType()==2){
+            return 2;
+        }
 
+        if(message.getUsername().equals(deviceName)){
 
+            return 0;
+        }
+        else{
+            return 1;
+        }
 
-
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.codeplayer.rahat_cfd;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -20,7 +21,10 @@ public class MessageAdapter extends BaseAdapter {
     Context context;
     private List<messageStruct> mMessages;
 
+
+
     public MessageAdapter(Context context) {
+
         this.context = context;
     }
 
@@ -68,12 +72,12 @@ public class MessageAdapter extends BaseAdapter {
 //
 
 
-        if (message.isBelongsToCurrentUser()) {
+        if (message.isBelongsToCurrentUser()==1) {
             convertView = messageInflater.inflate(R.layout.my_message, null);
             holder.messageBody = (TextView) convertView.findViewById(R.id.message_body);
             convertView.setTag(holder);
             holder.messageBody.setText(messagedb.getMessage());
-        } else {
+        } else if(message.isBelongsToCurrentUser()==0){
             convertView = messageInflater.inflate(R.layout.their_message, null);
             holder.avatar = (View) convertView.findViewById(R.id.avatar);
             holder.name = (TextView) convertView.findViewById(R.id.name);

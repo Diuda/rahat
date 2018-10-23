@@ -22,11 +22,20 @@ public class messageStruct {
     @ColumnInfo(name = "message")
     private String message;
 
+    @ColumnInfo(name="messageType")
+    private int messageType;
 
-    public messageStruct( String username, String message){
+
+    public int getMessageType() {
+        return messageType;
+    }
+
+    public messageStruct(String username, String message, int messageType){
         this.messageid = UUID.randomUUID().toString();
         this.username = username;
         this.message = message;
+        this.messageType = messageType;
+
     }
 
 
