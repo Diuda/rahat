@@ -12,10 +12,11 @@ public class ParsedMessagePayload {
 
 
 
+
         private String data;
         private  String sendStamp;
         private String receiveStamp;
-        private boolean isAck;
+        private int messageType;
 
 
         public String getData(){
@@ -30,15 +31,15 @@ public class ParsedMessagePayload {
             return this.receiveStamp;
         }
 
-        public boolean isAck(){
-            return this.isAck;
+        public int getMessageType(){
+            return this.messageType;
         }
 
         ParsedMessagePayload(){
             data=null;
             sendStamp=null;
             receiveStamp=null;
-            isAck = false;
+            messageType = 0;
         }
         void parseData(Payload payload){
 
@@ -51,28 +52,48 @@ public class ParsedMessagePayload {
             String [] parsedPayload = payloadString.split("#");
             Log.i("PayloadReceived",payloadString);
             Log.i("PayloadReceived", Arrays.toString(parsedPayload));
-            for(int i=0;i<parsedPayload.length;i++){
 
-                if(i==0){
 
-                    this.isAck = Boolean.parseBoolean(parsedPayload[0]);
 
-                    if(this.isAck==true)
+                    this.messageType = Integer.parseInt(parsedPayload[0]);
+
+                    if(this.messageType==0) {
+                        this.data = parsedPayload[1];
+                        this.sendStamp = parsedPayload[2];
+                        this.receiveStamp =  Long.toString(new Date().getTime());
+                    }
+                    //ACK Message
+                    if(this.messageType==1)
                         return;
-                }
-                if(i==1){
-                    this.data = parsedPayload[1];
-                }
-                if(i==2){
-                    this.sendStamp = parsedPayload[2];
-                }
+
+                    if(this.messageType==2){
+
+                        LocationParser.parseLocation(parsedPayload);
+
+                    }
+
 
             }
 
-                this.receiveStamp = Long.toString(new Date().getTime());
 
         }
 
+        abstract class LocationParser{
 
+                private static String Longitude;
+                private static String Latitude;
 
-}
+            public static String getLongitude() {
+                return Longitude;
+            }
+
+            public static String getLatitude() {
+                return Latitude;
+            }
+
+            static void parseLocation(String[] data){
+
+                    Latitude = data[1];
+                    Longitude = data[2];
+                }
+        }
