@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.MessageViewHolder> {
@@ -17,10 +19,14 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     class MessageViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView messageItemView;
+        private final TextView nameItemView;
+        private final TextView timeItemView;
 
         private  MessageViewHolder(View itemView) {
             super(itemView);
             messageItemView = itemView.findViewById(R.id.message_body);
+            nameItemView = itemView.findViewById(R.id.name);
+            timeItemView = itemView.findViewById(R.id.msgTime);
         }
 
     }
@@ -60,6 +66,13 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
         if (mMessages != null) {
             messageStruct current = mMessages.get(position);
             holder.messageItemView.setText(current.getMessage());
+            if(holder.nameItemView!=null)
+            holder.nameItemView.setText(current.getUsername());
+            if(holder.timeItemView!=null){
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                String str = sdf.format(new Date());
+                holder.timeItemView.setText(str);
+            }
         } else {
             // Covers the case of data not being ready yet.
             holder.messageItemView.setText("No Word");
