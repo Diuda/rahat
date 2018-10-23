@@ -1,10 +1,17 @@
 package com.example.codeplayer.rahat_cfd;
 
+import android.Manifest;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.util.Arrays;
@@ -27,15 +35,17 @@ public class chatFragment extends Fragment {
     final private String SERVICE_ID = "RAHAT_CFD";
     private ListView messagesView;
     private ImageButton sendButton;
+    private ImageButton gpsButton;
     private RecyclerView recyclerView;
     MainActivity act;
     private MessageViewModel messageViewModel;
+    LocationManager lm;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_chat,container,false);
+        return inflater.inflate(R.layout.fragment_chat, container, false);
     }
 
     @Override
@@ -48,16 +58,16 @@ public class chatFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-
-
+        gpsButton = view.findViewById(R.id.my_location);
+        gpsButton.setOnClickListener(myLocationListener);
         messageToSend = view.findViewById(R.id.messageToSend);
 //        messageAdapter = new MessageAdapter(getActivity());
 //        messagesView =  view.findViewById(R.id.messages_view);
-        sendButton =  (ImageButton) view.findViewById(R.id.sendButton);
+        sendButton = (ImageButton) view.findViewById(R.id.sendButton);
 //        messagesView.setAdapter(messageAdapter);
 ////
         sendButton.setOnClickListener(sendMessageListener);
-        act = ((MainActivity)getActivity());
+        act = ((MainActivity) getActivity());
 
 
         messageViewModel = ViewModelProviders.of(getActivity()).get(MessageViewModel.class);
@@ -67,27 +77,19 @@ public class chatFragment extends Fragment {
             @Override
             public void onChanged(@Nullable List<messageStruct> messageStructs) {
 
-                if(messageStructs.isEmpty()){
+                if (messageStructs.isEmpty()) {
 
 
-                }
-
-                else {
+                } else {
                     Log.i("databasek]chal", String.valueOf(messageStructs.size()));
 
                     adapter.setWords(messageStructs);
                 }
 
-                }
-
+            }
 
 
         });
-
-
-
-
-
 
 
     }
@@ -99,9 +101,55 @@ public class chatFragment extends Fragment {
 
             String message = messageToSend.getText().toString();
             messageToSend.setText("");
-            act.sendData(message,messageAdapter,null,false);
+            act.sendData(message, messageAdapter, null, 0);
 
             //Logic to send message
+
+        }
+    };
+
+    private View.OnClickListener myLocationListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+           lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+        }
+    };
+
+    private final LocationListener mLocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(final Location location) {
+            //your code here
+            String lat  = Double.toString(location.getLatitude());
+            String lon  = Double.toString(location.getLongitude());
+
+            act.sendData(lat+"#"+lon, messageAdapter, null, 2);
+            lm.removeUpdates(mLocationListener);
+            lm = null;
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
 
         }
     };
