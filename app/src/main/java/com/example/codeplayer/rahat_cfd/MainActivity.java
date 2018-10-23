@@ -259,6 +259,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         cf.adapter.notifyDataSetChanged();
                          }
                          endpointUser.put(endpointId,discoveredEndpointInfo.getEndpointName());
+                        Log.i("ENDPOINTNAME",discoveredEndpointInfo.getEndpointName());
+                    Log.i("ENDPOINTNAME",deviceName);
                     Toast.makeText(getApplicationContext(),"Found new user in vicinity!",Toast.LENGTH_SHORT).show();
 
 
@@ -394,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         //If not an ack send ack
                         String parsedData = parser.getData();
 
-                        messageStruct messageStruct = new messageStruct(endpointUser.get(endpointId),parsedData,0);
+                        messageStruct messageStruct = new messageStruct(endpointUser.get(endpointId),parsedData,1);
                         messageViewModel.insert(messageStruct);
 
 
@@ -464,7 +466,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             else if(messageType==2){
 
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString+"#"+data).getBytes("UTF-8")));
-                messageStruct messageStruct = new messageStruct(deviceName,data,messageType);
+                messageStruct messageStruct = new messageStruct(deviceName,data.split("#")[0]+","+data.split("#")[1],messageType);
                 messageViewModel.insert(messageStruct);
             }
         } catch (UnsupportedEncodingException e) {

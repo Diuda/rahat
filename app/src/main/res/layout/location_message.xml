@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
     app:cardBackgroundColor="#e0ffc6"
+    android:id="@+id/mapCard"
     app:cardCornerRadius="5dp">
 
     <LinearLayout
@@ -19,7 +20,7 @@
             android:layout_height="150dp"
             android:padding="5dp"
             android:scaleType="fitXY"
-            tools:src="@tools:sample/backgrounds/scenic" />
+             android:src="@drawable/maps_thumbnail"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -40,11 +41,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:text="11:00 AM"
+                android:id="@+id/msgTime"
                 android:textColor="#000000"
                 android:textSize="10sp" />
 
             <ImageView
+                android:id="@+id/mapImage"
                 android:layout_width="10dp"
                 android:layout_height="10dp"
                 android:layout_gravity="center_vertical"
