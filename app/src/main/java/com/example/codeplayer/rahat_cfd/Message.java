@@ -2,9 +2,9 @@ package com.example.codeplayer.rahat_cfd;
 public class Message {
     private String text;
     private MemberData data;
-    private boolean belongsToCurrentUser;
+    private int belongsToCurrentUser;
 
-    public Message(String text, MemberData data, boolean belongsToCurrentUser) {
+    public Message(String text, MemberData data, int belongsToCurrentUser) {
         this.text = text;
         this.data = data;
         this.belongsToCurrentUser = belongsToCurrentUser;
@@ -18,7 +18,7 @@ public class Message {
         return data;
     }
 
-    public boolean isBelongsToCurrentUser() {
+    public int isBelongsToCurrentUser() {
         return belongsToCurrentUser;
     }
 }
