@@ -443,7 +443,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(getApplicationContext(),"Please connect to atleast one peer",Toast.LENGTH_SHORT).show();
                     return;
                 }
-            
+
 
             String messageTypeString  = String.valueOf(messageType);
             Log.i("ACKVAL-SENDING",messageTypeString);
