@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -150,8 +152,8 @@ public class chatFragment extends Fragment {
         public void onClick(View v) {
 
 
-            act.sendData(data,messageAdapter,act.connectedList,4);
-
+            act.sendData(null,messageAdapter,act.connectedList,4);
+            Snackbar.make(v.getRootView(),"SOS initiated",Snackbar.LENGTH_SHORT).show();
 
 
         }
