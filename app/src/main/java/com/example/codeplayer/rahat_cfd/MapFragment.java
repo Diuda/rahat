@@ -64,7 +64,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
             return;
         }
         promptForGps();
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+//        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
     }
 
@@ -72,9 +72,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     public void onMapReady(GoogleMap googleMap) {
 
         map = googleMap;
-        LatLng coords = new LatLng(24,23);
-        map.addMarker(new MarkerOptions().position(coords).title("Me"));
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(coords,15));
+        LocationAnalyzer.plotData(map);
     }
 
     @Override
