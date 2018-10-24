@@ -1,10 +1,12 @@
 package com.example.codeplayer.rahat_cfd;
 
 import android.Manifest;
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -34,6 +36,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
@@ -84,8 +88,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Map<String,Double> distanceMapper;
     ParsedMessagePayload parser;
     AckParser ackParser;
+    Activity currentActivity;
+    int coordsReceived;
+
+    String locationData;
 
     protected Set<String> connectedList = new HashSet<>();
+
+
 
 
 
@@ -99,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
+
         //-----------------------------------------------------------
         //--------__ Instantiating Objects__---------------------------------
 
@@ -108,7 +119,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         parser = new ParsedMessagePayload();
         ackParser = new AckParser();
         distanceMapper = new HashMap<>();
-
+        currentActivity = this;
+        locationData = "";
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -121,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        coordsReceived = 0;
 
     }
     @Override
@@ -361,10 +374,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     String data = null;
                     try {
 
+
+                        //------- FIX---------------------------
+                        //Change to use a better Data Structure
+
+
+                        final HashSet<String> endpointConnection = new HashSet<String>();
+                        endpointConnection.add(endpointId);
+
+                        //----------------------------------
+
                         //---------------FIX ASAP------------------------------
                         //To be corrected: Will crash if message appears and
                         //User is on Connections screen
-                        chatFragment ct = (chatFragment) getSupportFragmentManager().findFragmentById(R.id.screen_area);
+                        final chatFragment ct = (chatFragment) getSupportFragmentManager().findFragmentById(R.id.screen_area);
 
                         //---------------------------------------------------
 
@@ -374,9 +397,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         if(messageType==1){
 
-
                             ackParser.parseAckMessage(payload);
-                            double distance = ackParser.findDistance();
+                             final double distance = ackParser.findDistance();
+
+                            LatLong.setListener(new CoordinatesReadyListener() {
+                                @Override
+                                public void onCoordinatesReady(String lat , String lon) {
+
+
+                                    sendData(String.format("%s#%s#%s", lat, lon, distance),ct.messageAdapter,endpointConnection,5);
+                                }
+                            });
+
+                            LatLong.getCurrentLocation(currentActivity,getApplicationContext());
+
                             Log.i("DISTANCECFD",Double.toString(distance));
                             //Add code to calculate Mean and Variance
                             //Get location in Real Time
@@ -390,20 +424,52 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             return;
 
+                        }
+                        //Distance Request message
+                        else if(messageType==3){
+
+                            sendData(null,ct.messageAdapter,endpointConnection,1);
+
+                            return;
+                        }
+                        //SOS Location message
+                        else if (messageType==4){
+
+
+
+                            sendData(null,ct.messageAdapter,endpointConnection,3);
+                            return;
+
+                        }
+
+                        //Pass data to all peers
+                        else if(messageType==5){
+
+                            coordsReceived++;
+                            locationData+= new String(payload.asBytes(),"UTF-8");
+                            locationData+="###";
+
+
+                            if(coordsReceived==3) {
+
+                                sendData(locationData, ct.messageAdapter, connectedList, 6);
+                                locationData = "";
+                                coordsReceived=0;
+                            }
+                            return;
+
+                        }
+                        else if(messageType==6){
+
+
+                            LocationAnalyzer.parseLocationData(data);
+
+                            Toast.makeText(getApplicationContext(),"Victim located near you. Check Maps",Toast.LENGTH_SHORT).show();
+
 
 
                         }
 
-
-                        //------- FIX---------------------------
-                        //Change to use a better Data Structure
-
-
-                        HashSet<String> endpointConnection = new HashSet<String>();
-                        endpointConnection.add(endpointId);
-                        Log.i("ACKENDPT",endpointConnection.toString());
-                        sendData(null,ct.messageAdapter,endpointConnection,1);
-                        //----------------------------------
 
 
                         //If not an ack send ack
@@ -413,6 +479,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         messageViewModel.insert(messageStruct);
 
 
+
+                        //------------Relaying messages----------
 
                         Set<String> connections =  new HashSet<String>();
 
@@ -432,6 +500,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
+                    //-----------------------------------------------
 
                 }
 
@@ -466,7 +536,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 messageStruct messageStruct = new messageStruct(uuid,deviceName,data,messageType);
                 messageViewModel.insert(messageStruct);
-                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString + "#" + data + "#" + new Date().getTime()).getBytes("UTF-8")));
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString + "#" + data).getBytes("UTF-8")));
 
 //                messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
                 Log.i("CFDPP","Message Adapter completed");
@@ -493,6 +563,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString+"#"+data).getBytes("UTF-8")));
                 messageStruct messageStruct = new messageStruct(uuid,deviceName,data.split("#")[0]+","+data.split("#")[1],messageType);
                 messageViewModel.insert(messageStruct);
+            }
+            //Distance Request message
+            else if(messageType==3){
+
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+ "#" + new Date().getTime()).getBytes("UTF-8")));
+
+            }
+
+            //SOS Location Broadcast
+
+            else if(messageType==4){
+
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+"#").getBytes("UTF-8")));
+            }
+
+            else if(messageType==5){
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+"#"+data).getBytes("UTF-8")));
+
+            }
+            else if(messageType==6){
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((data).getBytes("UTF-8")));
             }
         } catch (UnsupportedEncodingException e) {
 
@@ -521,9 +612,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onSuccess(int statusCode, Header[] headers, JSONArray timeline) {
                 // Pull out the first event on the public timeline
 
-
-
-                    Toast.makeText(getApplicationContext(), String.valueOf(statusCode), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), String.valueOf(statusCode), Toast.LENGTH_LONG).show();
 
 
             }
