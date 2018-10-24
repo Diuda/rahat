@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,9 +26,17 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.json.*;
+import com.loopj.android.http.*;
+
+import cz.msebera.android.httpclient.Header;
+
 
 public class chatFragment extends Fragment {
 
@@ -40,6 +50,9 @@ public class chatFragment extends Fragment {
     MainActivity act;
     private MessageViewModel messageViewModel;
     LocationManager lm;
+    List<messageStruct> messageStructList;
+
+
 
     @Nullable
     @Override
@@ -51,6 +64,8 @@ public class chatFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        messageStructList = new ArrayList<>();
 
 
         recyclerView = view.findViewById(R.id.messagerecycleview);
@@ -91,8 +106,30 @@ public class chatFragment extends Fragment {
 
         });
 
+        if(isNetworkAvailable()){
+
+
+            try {
+                getRestMessages(adapter);
+
+//                Log.i("scenekyahai", String.valueOf(messageStructList.size()));
+//                adapter.setWords(messageStructList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+        else{
+
+        }
+
+
+
+
 
     }
+
 
     private View.OnClickListener sendMessageListener = new View.OnClickListener() {
         @Override
@@ -165,6 +202,55 @@ public class chatFragment extends Fragment {
 
         }
     };
+
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+
+    public void getRestMessages(final MessageListAdapter adapter) throws JSONException {
+        RestClient.get("/getData", null, new JsonHttpResponseHandler(){
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray timeline) {
+                // Pull out the first event on the public timeline
+
+                try {
+                    JSONObject firstEvent = timeline.getJSONObject(0);
+                    String username = firstEvent.getString("username");
+                    String message = firstEvent.getString("message");
+
+
+                    for(int i=0;i<timeline.length(); i++){
+
+                        JSONObject data = timeline.getJSONObject(i);
+                        String usermessage = data.getString("message");
+                        Toast.makeText(getContext(), usermessage, Toast.LENGTH_LONG).show();
+
+                        messageStructList.add(i, new messageStruct(data.getString("uuid"), data.getString("username"), data.getString("message"), 0));
+
+
+//                        messageStruct messageStruct = new messageStruct();
+                    }
+
+                    adapter.setWords(messageStructList);
+
+
+
+                    // Do something with the response
+                    System.out.println(username);
+
+                }
+                catch (JSONException e){
+                    Log.e("APIERROR", "Kuch fata");
+                }
+            }
+        });
+    }
 
 
 }
