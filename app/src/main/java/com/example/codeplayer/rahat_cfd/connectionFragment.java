@@ -59,7 +59,6 @@ public class connectionFragment  extends Fragment {
     ArrayList<String> listItems=new ArrayList<String>();
     ArrayAdapter<String> adapter;
 
-    protected Set<String> connectedList = new HashSet<>();
 
     private String currentConnection = null;
 

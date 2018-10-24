@@ -108,6 +108,18 @@ public class chatFragment extends Fragment {
         }
     };
 
+    private  View.OnClickListener SOSMessageListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+
+            act.sendData(data,messageAdapter,act.connectedList,4);
+
+
+
+        }
+    };
+
     private View.OnClickListener myLocationListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

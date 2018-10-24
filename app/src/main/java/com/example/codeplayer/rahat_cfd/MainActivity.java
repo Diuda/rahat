@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ParsedMessagePayload parser;
     AckParser ackParser;
 
+    protected Set<String> connectedList = new HashSet<>();
 
 
 
@@ -305,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             Log.i("CODEFUNDO","SUCCESFFULL connection");
 
-                            cf.connectedList.add(endpointId);
+                            connectedList.add(endpointId);
                             chatFragment cft = new chatFragment();
                             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                             ft.replace(R.id.screen_area,cft,"FragmentTAG");
@@ -403,7 +404,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         Set<String> connections =  new HashSet<String>();
 
-                        for (String connectionID: cf.connectedList) {
+                        for (String connectionID: connectedList) {
 
                             if(!connectionID.equals(endpointId)){
 
@@ -433,16 +434,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         try {
             if(connectedList==null){
-                if(cf==null){
+                if(this.connectedList==null)
                     Toast.makeText(getApplicationContext(),"Please connect to atleast one peer",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                connectedList = cf.connectedList;
+                connectedList = this.connectedList;
                 if(connectedList==null){
                     Toast.makeText(getApplicationContext(),"Please connect to atleast one peer",Toast.LENGTH_SHORT).show();
                     return;
                 }
-            }
+            
 
             String messageTypeString  = String.valueOf(messageType);
             Log.i("ACKVAL-SENDING",messageTypeString);
