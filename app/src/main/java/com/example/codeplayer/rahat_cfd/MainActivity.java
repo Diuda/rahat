@@ -66,6 +66,8 @@ import java.util.Map;
 import java.util.Set;
 
 import cz.msebera.android.httpclient.Header;
+import java.util.UUID;
+
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -382,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                         else if (messageType==2){
 
-                            messageStruct messageStruct = new messageStruct(endpointUser.get(endpointId),LocationParser.getLatitude()+","+LocationParser.getLongitude(),2);
+                            messageStruct messageStruct = new messageStruct(UUID.randomUUID().toString(),endpointUser.get(endpointId),LocationParser.getLatitude()+","+LocationParser.getLongitude(),2);
                             messageViewModel.insert(messageStruct);
 
                             return;
@@ -406,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         //If not an ack send ack
                         String parsedData = parser.getData();
 
-                        messageStruct messageStruct = new messageStruct(endpointUser.get(endpointId),parsedData,1);
+                        messageStruct messageStruct = new messageStruct(UUID.randomUUID().toString(),endpointUser.get(endpointId),parsedData,1);
                         messageViewModel.insert(messageStruct);
 
 
@@ -456,14 +458,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             String messageTypeString  = String.valueOf(messageType);
             Log.i("ACKVAL-SENDING",messageTypeString);
+            String uuid = UUID.randomUUID().toString();
             //Send user message data
+
             if(messageType==0) {
-                messageStruct messageStruct = new messageStruct(deviceName,data,messageType);
+
+                messageStruct messageStruct = new messageStruct(uuid,deviceName,data,messageType);
                 messageViewModel.insert(messageStruct);
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString + "#" + data + "#" + new Date().getTime()).getBytes("UTF-8")));
 
 //                messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
                 Log.i("CFDPP","Message Adapter completed");
+
+                if(isNetworkAvailable()){
+
+                    try {
+                        sendRestMessages(uuid, deviceName, data);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
 
             }
             //Send Timestamp
@@ -476,7 +490,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             else if(messageType==2){
 
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString+"#"+data).getBytes("UTF-8")));
-                messageStruct messageStruct = new messageStruct(deviceName,data.split("#")[0]+","+data.split("#")[1],messageType);
+                messageStruct messageStruct = new messageStruct(uuid,deviceName,data.split("#")[0]+","+data.split("#")[1],messageType);
                 messageViewModel.insert(messageStruct);
             }
         } catch (UnsupportedEncodingException e) {
@@ -495,8 +509,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    public void getRestMessages(String username, String message) throws JSONException {
+    public void sendRestMessages(String uuid, String username, String message) throws JSONException {
         RequestParams params = new RequestParams();
+        params.put("uuid", uuid);
         params.put("user", username);
         params.put("message", message);
         RestClient.post("/addData", params, new JsonHttpResponseHandler(){
