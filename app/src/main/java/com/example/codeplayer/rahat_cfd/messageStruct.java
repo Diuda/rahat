@@ -26,16 +26,18 @@ public class messageStruct {
     private int messageType;
 
 
-    public int getMessageType() {
-        return messageType;
-    }
 
-    public messageStruct(String username, String message, int messageType){
-        this.messageid = UUID.randomUUID().toString();
+
+    public messageStruct(String messageid, String username, String message, int messageType){
+        this.messageid = messageid;
         this.username = username;
         this.message = message;
         this.messageType = messageType;
 
+    }
+
+    public int getMessageType() {
+        return messageType;
     }
 
 
