@@ -171,8 +171,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        tabs.getTabAt(1).setIcon(tabIcons[1]);
 //        tabs.getTabAt(2).setIcon(tabIcons[2]);
 //        navigationView.setNavigationItemSelectedListener(this);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+//        navigationView.setNavigationItemSelectedListener(this);
         coordsReceived = 0;
 
     }
