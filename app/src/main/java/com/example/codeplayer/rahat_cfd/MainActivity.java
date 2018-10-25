@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         distanceMapper = new HashMap<>();
         currentActivity = this;
         locationData = "";
+        connectionNameToId = new HashMap<>();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -528,11 +529,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(getApplicationContext(),"Please connect to atleast one peer",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                connectedList = this.connectedList;
-                if(connectedList==null){
-                    Toast.makeText(getApplicationContext(),"Please connect to atleast one peer",Toast.LENGTH_SHORT).show();
-                    return;
-                }
+
+
+
 
 
             String messageTypeString  = String.valueOf(messageType);

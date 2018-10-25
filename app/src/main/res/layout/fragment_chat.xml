@@ -52,7 +52,7 @@
             android:paddingHorizontal="10dp"
             android:text="" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/SOSSignal"
             android:layout_width="35dp"
             android:layout_height="match_parent"
