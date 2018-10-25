@@ -17,7 +17,17 @@
             android:title="Location">
 
         </item>
+        <item
+            android:id="@+id/nav_global_chat"
+            android:title="Global Chat Room"
+            >
 
+        </item>
+        <item
+            android:id="@+id/nav_safety_tips"
+            android:title="Guide and Tips">
+
+        </item>
     </group>
 
 
