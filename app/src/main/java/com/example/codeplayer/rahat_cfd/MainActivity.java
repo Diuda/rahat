@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Activity currentActivity;
     int coordsReceived;
     Map<String,String> connectionNameToId;
-
+    LocationAnalyzer locationAnalyzer;
     String locationData;
 
     protected Set<String> connectedList = new HashSet<>();
@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         distanceMapper = new HashMap<>();
         currentActivity = this;
         locationData = "";
+        locationAnalyzer = new LocationAnalyzer();
         connectionNameToId = new HashMap<>();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -459,6 +460,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             locationData+= new String(payload.asBytes(),"UTF-8");
                             locationData+="###";
 
+                            Log.i("FUCKTHISSHIT",locationData);
 
                             if(coordsReceived==1) {
 
@@ -472,12 +474,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         else if(messageType==6){
 
 
-                            LocationAnalyzer.parseLocationData(data);
+                            String dataString = parser.getData();
+                            locationAnalyzer.parseLocationData(dataString,getBaseContext());
+                            Log.i("VICTIMLOCATED","COOL");
 
-                            Toast.makeText(getApplicationContext(),"Victim located near you. Check Maps",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(),"Victim located near you. Check Maps",Toast.LENGTH_LONG).show();
 
 
-
+                            return;
                         }
 
 
@@ -551,7 +555,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
                 Log.i("CFDPP","Message Adapter completed");
 
-                if(isNetworkAvailable()){
+                //Change this
+                if(false){
 
                     try {
                         sendRestMessages(uuid, deviceName, data);
@@ -601,7 +606,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             else if(messageType==6){
                 Log.i("LocationTag","Sending coordinates");
-                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((data).getBytes("UTF-8")));
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+"#"+data).getBytes("UTF-8")));
+
             }
         } catch (UnsupportedEncodingException e) {
 
@@ -634,6 +640,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
             }
+
+
         });
     }
 
