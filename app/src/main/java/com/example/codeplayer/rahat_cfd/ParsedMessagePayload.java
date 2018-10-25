@@ -16,6 +16,7 @@ public class ParsedMessagePayload {
         private String data;
         private  String sendStamp;
         private String receiveStamp;
+
         private int messageType;
 
 
@@ -55,12 +56,30 @@ public class ParsedMessagePayload {
 
 
 
+
                     this.messageType = Integer.parseInt(parsedPayload[0]);
+
+                    if(this.messageType==5){
+                        return;
+                    }
+                    if(this.messageType==6){
+
+                        this.data = payloadString.split("6#")[1];
+                    }
+                    if(this.messageType==4){
+
+
+                        return;
+                    }
+                    if(this.messageType==3){
+
+                        this.sendStamp = parsedPayload[1];
+                        this.receiveStamp =  Long.toString( System.currentTimeMillis());
+
+                    }
 
                     if(this.messageType==0) {
                         this.data = parsedPayload[1];
-                        this.sendStamp = parsedPayload[2];
-                        this.receiveStamp =  Long.toString(new Date().getTime());
                     }
                     //ACK Message
                     if(this.messageType==1)

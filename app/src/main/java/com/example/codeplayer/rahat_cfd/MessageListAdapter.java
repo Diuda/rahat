@@ -73,21 +73,18 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             cardView = itemView.findViewById(R.id.mapCard);
 
             cardView.setOnClickListener(this);
+            this.getItemId();
 
         }
 
 
         @Override
         public void onClick(View v) {
-//
-                String []coords = messageItemView.getText().toString().split(",");
-//                String strUri = "http://maps.google.com/maps?q=loc:" + coords[0] + "," + coords[1] + " (" + "Me" + ")";
-//
+
+            String []coords = messageItemView.getText().toString().split(",");
+
             Log.i("CLICK HUA", Arrays.toString(coords));
-//                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(strUri));
-//
-//                intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-//                context.startActivity(intent);
+
 
             String latitude = coords[0];
             String longitude = coords[1];
