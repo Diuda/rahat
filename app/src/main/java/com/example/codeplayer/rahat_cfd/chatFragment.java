@@ -106,23 +106,7 @@ public class chatFragment extends Fragment {
 
         });
 
-        if(isNetworkAvailable()){
 
-
-            try {
-                getRestMessages(adapter);
-
-//                Log.i("scenekyahai", String.valueOf(messageStructList.size()));
-//                adapter.setWords(messageStructList);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-        }
-        else{
-
-        }
 
 
 
@@ -192,53 +176,7 @@ public class chatFragment extends Fragment {
     };
 
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
 
-
-    public void getRestMessages(final MessageListAdapter adapter) throws JSONException {
-        RestClient.get("/getData", null, new JsonHttpResponseHandler(){
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray timeline) {
-                // Pull out the first event on the public timeline
-
-                try {
-                    JSONObject firstEvent = timeline.getJSONObject(0);
-                    String username = firstEvent.getString("username");
-                    String message = firstEvent.getString("message");
-
-
-                    for(int i=0;i<timeline.length(); i++){
-
-                        JSONObject data = timeline.getJSONObject(i);
-                        String usermessage = data.getString("message");
-                        Toast.makeText(getContext(), usermessage, Toast.LENGTH_LONG).show();
-
-                        messageStructList.add(i, new messageStruct(data.getString("uuid"), data.getString("username"), data.getString("message"), 0));
-
-
-//                        messageStruct messageStruct = new messageStruct();
-                    }
-
-                    adapter.setWords(messageStructList);
-
-
-
-                    // Do something with the response
-                    System.out.println(username);
-
-                }
-                catch (JSONException e){
-                    Log.e("APIERROR", "Kuch fata");
-                }
-            }
-        });
-    }
 
 
 }
