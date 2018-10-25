@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,6 +68,8 @@ public class connectionFragment  extends Fragment {
     Button connect;
     ListView connectionsList;
 
+    private RecyclerView connectionRecyclerView;
+
 
 
     @Nullable
@@ -81,6 +84,8 @@ public class connectionFragment  extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         act= ((MainActivity)getActivity());
+
+        connectionRecyclerView = view.findViewById(R.id.connectionrecylerview);
 
         connect  = view.findViewById(R.id.connect);
         connect.setOnClickListener(makeConnectionListener);
