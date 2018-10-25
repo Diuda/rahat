@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -26,9 +27,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, LocationListener {
 
@@ -72,7 +76,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     public void onMapReady(GoogleMap googleMap) {
 
         map = googleMap;
-        LocationAnalyzer.plotData(map);
+        MainActivity act = (MainActivity)getActivity();
+        ArrayList<LocationData> latLng =  act.locationAnalyzer.plotData(getContext());
+
+        for(LocationData coords:latLng){
+
+            LatLng pos = new LatLng(coords.getLat(),coords.getLon());
+
+            map.addMarker(new MarkerOptions().position(pos).title("User"));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos,15));
+            map.addCircle(new CircleOptions()
+                    .center(pos)
+                    .radius(coords.getDist())
+                    .strokeColor(Color.RED)
+                    .fillColor(Color.BLUE));
+
+        }
     }
 
     @Override
