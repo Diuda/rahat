@@ -59,6 +59,13 @@ public class ParsedMessagePayload {
 
                     this.messageType = Integer.parseInt(parsedPayload[0]);
 
+                    if(this.messageType==5){
+                        return;
+                    }
+                    if(this.messageType==6){
+
+                        this.data = payloadString.split("6#")[1];
+                    }
                     if(this.messageType==4){
 
 
