@@ -10,12 +10,14 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -84,7 +86,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Map<String,Double> distanceMapper;
     ParsedMessagePayload parser;
     AckParser ackParser;
-
+    private TabAdapter tabAdapter;
+    private ViewPager pager;
+    private TabLayout tabs;
+    private int[] tabIcons = {
+            R.drawable.ic_bluetooth_connected_black_24dp,
+            R.drawable.ic_chat_black_24dp,
+            R.drawable.ic_location_on_black_24dp
+    };
 
 
 
@@ -112,24 +121,61 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        drawer.addDrawerListener(toggle);
+//        toggle.syncState();
+
+
+
+//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        pager = findViewById(R.id.viewPager);
+        tabs = findViewById(R.id.tabs);
+        tabAdapter = new TabAdapter(getSupportFragmentManager(), this);
+        tabAdapter.addFragment(new connectionFragment(), "Connections", tabIcons[0]);
+        tabAdapter.addFragment(new chatFragment(), "Chat", tabIcons[1]);
+        tabAdapter.addFragment(new MapFragment(), "Map", tabIcons[2]);
+
+
+        pager.setAdapter(tabAdapter);
+        tabs.setupWithViewPager(pager);
+
+        highLightCurrentTab(0);
+
+
+
+//        tabs.getTabAt(0).setIcon(tabIcons[0]);
+//        tabs.getTabAt(1).setIcon(tabIcons[1]);
+//        tabs.getTabAt(2).setIcon(tabIcons[2]);
+//        navigationView.setNavigationItemSelectedListener(this);
 
     }
+
+    private void highLightCurrentTab(int position) {
+        for (int i = 0; i < tabs.getTabCount(); i++) {
+            TabLayout.Tab tab = tabs.getTabAt(i);
+            assert tab != null;
+            tab.setCustomView(null);
+            tab.setCustomView(tabAdapter.getTabView(i));
+        }
+        TabLayout.Tab tab = tabs.getTabAt(position);
+        assert tab != null;
+        tab.setCustomView(null);
+        tab.setCustomView(tabAdapter.getSelectedTabView(position));
+    }
+
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        if (drawer.isDrawerOpen(GravityCompat.START)) {
+//            drawer.closeDrawer(GravityCompat.START);
+//        } else {
+//            super.onBackPressed();
+//        }
     }
 
     @Override
@@ -180,8 +226,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ft.replace(R.id.screen_area,fragment);
             ft.commit();
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
