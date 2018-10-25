@@ -67,8 +67,8 @@ public class Main2Activity extends AppCompatActivity {
 
         if(requestCode == 2 && resultCode == 1) {
             Log.i("messagekivalues", data.getStringExtra("MESSAGE"));
-            messageStruct messageStruct = new messageStruct( data.getStringExtra("USERNAME"), data.getStringExtra("MESSAGE"),1);
-            messageViewModel.insert(messageStruct);
+//            messageStruct messageStruct = new messageStruct( data.getStringExtra("USERNAME"), data.getStringExtra("MESSAGE"),1);
+//            messageViewModel.insert(messageStruct);
 
         }
         else{
