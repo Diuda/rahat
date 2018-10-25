@@ -21,10 +21,10 @@ public class AckParser {
 
     private void getTimes(String t1,String t2,String t3){
 
-        this.t1 = Long.parseLong(t1)/1000;
-        this.t2 = Long.parseLong(t2)/1000;
-        this.t3 = Long.parseLong(t3)/1000;
-        this.t4 = ( System.currentTimeMillis())/1000;
+        this.t1 = Long.parseLong(t1);
+        this.t2 = Long.parseLong(t2);
+        this.t3 = Long.parseLong(t3);
+        this.t4 = ( System.currentTimeMillis());
     }
     void  parseAckMessage(Payload payload){
 
@@ -44,13 +44,11 @@ public class AckParser {
     public double findDistance(){
 
         Log.i("TIME t1",t1.toString());
-
         Log.i("TIME t2",t2.toString());
-
         Log.i("TIME t3",t3.toString());
         Log.i("TIME t4",t4.toString());
 
 
-        return (((t4-t1)-(t3-t2))*299792458)/2;
+        return (((t4-t3)+(t3-t2))*299792.458f)/2;
     }
 }
