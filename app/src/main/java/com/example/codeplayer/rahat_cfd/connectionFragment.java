@@ -113,6 +113,7 @@ public class connectionFragment  extends Fragment {
         @Override
         public void onClick(View v) {
             Log.i("CFDPP","Mai chala");
+
             act.connect(act.connectionNameToId.get(currentConnection));
 
 
