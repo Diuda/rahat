@@ -188,6 +188,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else if(id==R.id.nav_location){
             fragment = new MapFragment();
         }
+        else if(id==R.id.nav_global_chat){
+            fragment = new GlobalChatFragment();
+        }
 
         if(fragment!=null){
             FragmentManager fragmentManager = getSupportFragmentManager();
