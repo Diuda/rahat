@@ -67,7 +67,7 @@ public class ParsedMessagePayload {
                     if(this.messageType==3){
 
                         this.sendStamp = parsedPayload[1];
-                        this.receiveStamp =  Long.toString(new Date().getTime());
+                        this.receiveStamp =  Long.toString( System.currentTimeMillis());
 
                     }
 

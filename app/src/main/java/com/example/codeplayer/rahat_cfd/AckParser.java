@@ -24,8 +24,7 @@ public class AckParser {
         this.t1 = Long.parseLong(t1);
         this.t2 = Long.parseLong(t2);
         this.t3 = Long.parseLong(t3);
-        this.t4 = (new Date().getTime());
-
+        this.t4 = ( System.currentTimeMillis());
     }
     void  parseAckMessage(Payload payload){
 
