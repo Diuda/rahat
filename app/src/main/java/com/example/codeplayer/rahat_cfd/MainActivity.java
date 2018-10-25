@@ -412,6 +412,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 @Override
                                 public void onCoordinatesReady(String lat , String lon) {
 
+                                    Log.i("COORDS","Coordinates ready");
 
                                     sendData(String.format("%s#%s#%s", lat, lon, distance),ct.messageAdapter,endpointConnection,5);
                                 }
@@ -524,12 +525,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         try {
-            if(connectedList==null){
-                if(this.connectedList==null)
-                    Toast.makeText(getApplicationContext(),"Please connect to atleast one peer",Toast.LENGTH_SHORT).show();
+            if(connectedList==null) {
+                if (this.connectedList == null) {
+                    Toast.makeText(getApplicationContext(), "Please connect to atleast one peer", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+                else
+                    connectedList=this.connectedList;
+            }
 
 
 
@@ -592,10 +595,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //Request relay of coordinates
 
             else if(messageType==5){
+                Log.i("Location Tag","Requesting relay of coordinates");
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+"#"+data).getBytes("UTF-8")));
 
             }
             else if(messageType==6){
+                Log.i("LocationTag","Sending coordinates");
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((data).getBytes("UTF-8")));
             }
         } catch (UnsupportedEncodingException e) {
