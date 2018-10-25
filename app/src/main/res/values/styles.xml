@@ -19,6 +19,12 @@
 
     <style name="AppTheme.PopupOverlay" parent="Theme.MaterialComponents.Light" />
 
+    <style name="MyToolbarTheme"
+        parent="@style/ThemeOverlay.AppCompat.Dark">
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="titleTextColor">@color/colorPrimary</item>
+    </style>
+
     <!-- The default font for RecyclerView items is too small.
     The margin is a simple delimiter between the words. -->
     <style name="word_title">
@@ -29,5 +35,12 @@
         <item name="android:layout_marginBottom">6dp</item>
         <item name="android:paddingLeft">8dp</item>
     </style>
+
+
+
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/activity_splash</item>
+    </style>
+
 
 </resources>
