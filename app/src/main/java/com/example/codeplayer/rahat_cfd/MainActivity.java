@@ -92,7 +92,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int[] tabIcons = {
             R.drawable.ic_bluetooth_connected_black_24dp,
             R.drawable.ic_chat_black_24dp,
-            R.drawable.ic_location_on_black_24dp
+            R.drawable.ic_location_on_black_24dp,
+            R.drawable.ic_cloud_done_black_24dp
     };
 
 
@@ -139,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tabAdapter.addFragment(new connectionFragment(), "Connections", tabIcons[0]);
         tabAdapter.addFragment(new chatFragment(), "Chat", tabIcons[1]);
         tabAdapter.addFragment(new MapFragment(), "Map", tabIcons[2]);
+        tabAdapter.addFragment(new GlobalChatFragment(), "Global", tabIcons[3]);
 
 
         pager.setAdapter(tabAdapter);
