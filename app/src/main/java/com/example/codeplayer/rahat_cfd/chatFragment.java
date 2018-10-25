@@ -53,7 +53,7 @@ public class chatFragment extends Fragment {
     private MessageViewModel messageViewModel;
     LocationManager lm;
     List<messageStruct> messageStructList;
-
+    private ImageButton sosButton;
 
 
     @Nullable
@@ -73,6 +73,8 @@ public class chatFragment extends Fragment {
         recyclerView = view.findViewById(R.id.messagerecycleview);
         final MessageListAdapter adapter = new MessageListAdapter(getActivity());
         recyclerView.setAdapter(adapter);
+        sosButton = view.findViewById(R.id.SOSSignal);
+        sosButton.setOnClickListener(SOSMessageListener);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         gpsButton = view.findViewById(R.id.my_location);
