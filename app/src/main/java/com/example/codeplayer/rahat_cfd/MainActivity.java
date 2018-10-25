@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     AckParser ackParser;
     Activity currentActivity;
     int coordsReceived;
+    Map<String,String> connectionNameToId;
 
     String locationData;
 
@@ -281,9 +282,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     f = getSupportFragmentManager().findFragmentById(R.id.screen_area);
                     if(f instanceof connectionFragment) {
                         cf = (connectionFragment) getSupportFragmentManager().findFragmentById(R.id.screen_area);
-                        cf.listItems.add(endpointId);
+                        cf.listItems.add(discoveredEndpointInfo.getEndpointName());
                         cf.adapter.notifyDataSetChanged();
+
                          }
+                         connectionNameToId.put(discoveredEndpointInfo.getEndpointName(),endpointId);
                          endpointUser.put(endpointId,discoveredEndpointInfo.getEndpointName());
                         Log.i("ENDPOINTNAME",discoveredEndpointInfo.getEndpointName());
                     Log.i("ENDPOINTNAME",deviceName);
@@ -397,9 +400,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         if(messageType==1){
 
+
                             ackParser.parseAckMessage(payload);
                              final double distance = ackParser.findDistance();
-
+                             Log.i("Received Distance",Double.toString(distance));
                             LatLong.setListener(new CoordinatesReadyListener() {
                                 @Override
                                 public void onCoordinatesReady(String lat , String lon) {
@@ -437,6 +441,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
+                            Log.i("LocationTag","Received request,dispatching time");
                             sendData(null,ct.messageAdapter,endpointConnection,3);
                             return;
 
@@ -450,7 +455,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             locationData+="###";
 
 
-                            if(coordsReceived==3) {
+                            if(coordsReceived==1) {
 
                                 sendData(locationData, ct.messageAdapter, connectedList, 6);
                                 locationData = "";
@@ -554,7 +559,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //Send Timestamp
             else if(messageType==1) {
 
-                String currentTime =  Long.toString(new Date().getTime());
+
+                Log.i("LocationTag","Dispatched time message");
+
+                String currentTime =  Long.toString( System.currentTimeMillis());
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString+"#"+parser.getSendStamp()+"#"+parser.getReceiveStamp()+"#"+currentTime).getBytes("UTF-8")));
             }
             //Send Location
@@ -567,7 +575,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //Distance Request message
             else if(messageType==3){
 
-                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+ "#" + new Date().getTime()).getBytes("UTF-8")));
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+ "#" +  System.currentTimeMillis()).getBytes("UTF-8")));
 
             }
 
@@ -575,8 +583,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             else if(messageType==4){
 
+                Log.i("LocationTag","SOS request received");
+
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+"#").getBytes("UTF-8")));
             }
+            //Request relay of coordinates
 
             else if(messageType==5){
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+"#"+data).getBytes("UTF-8")));
