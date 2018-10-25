@@ -10,6 +10,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 
 abstract public class LatLong {
 
@@ -40,6 +41,7 @@ abstract public class LatLong {
             return;
         }
 
+        Log.i("LocationTag","Getting current location for user");
 
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
 
@@ -48,6 +50,8 @@ abstract public class LatLong {
         private final static LocationListener mLocationListener = new LocationListener() {
             @Override
             public void onLocationChanged(final Location location) {
+
+                Log.i("LocationTag","Location changed");
 
                 currentLat  = Double.toString(location.getLatitude());
                 currentLong  = Double.toString(location.getLongitude());

@@ -1,69 +1,68 @@
 package com.example.codeplayer.rahat_cfd;
 
-import android.location.Location;
+import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
-abstract public class LocationAnalyzer {
-
-
-    static List<LocationData> coordinatorList;
-    private static MarkerOptions options;
-
-    private static ArrayList<LatLng> latlngs;
+public class LocationAnalyzer {
 
 
-    public static void parseLocationData(String data){
+    private   ArrayList<LocationData> coordinatorList;
 
 
+    private  ArrayList<LatLng> latlngs;
+
+
+     public LocationAnalyzer() {
+
+         this.coordinatorList  = new ArrayList<>();
+
+         this.latlngs = new ArrayList<>();
+     }
+
+     public  void parseLocationData(String data, Context context){
 
 
         String [] locations = data.split("###");
-        LocationData [] ld = new LocationData[3];
-        int i=0;
-        for (String location: locations){
+        LocationData ld = new LocationData();
 
+        for (int i=0;i<locations.length;i++){
+            String location  = locations[i];
             String [] locationData = location.split("#");
+            Toast.makeText(context,"That"+Arrays.toString(locationData),Toast.LENGTH_LONG).show();
 
-            ld[i].setLat(locationData[0]);
-            ld[i].setLon(locationData[1]);
-            ld[i].setDist(locationData[2]);
-            coordinatorList.add(ld[i]);
+            ld.setLat(locationData[1]);
+            ld.setLon(locationData[2]);
+            ld.setDist(locationData[3]);
+            coordinatorList.add(ld);
 
-            i++;
+            Log.v("ERRRSize",String.valueOf(coordinatorList.size()));
+
+
 
         }
-        latlngs = new ArrayList<>();
-        options  = new MarkerOptions();
-
-
-
-
-
-
     }
 
-    public static void plotData(GoogleMap googleMap){
-        for(LocationData ele: coordinatorList){
+    public ArrayList<LocationData> plotData(Context context){
 
-            latlngs.add(new LatLng(ele.getLat(),ele.getLon()));
-        }
+//        if(this.coordinatorList.size()==0){
+//            Toast.makeText(context,"No coordinates available",Toast.LENGTH_LONG).show();
+//            return null;
+//        }
+//        for(LocationData ele: coordinatorList){
+//
+//            Log.d("WORKING",String.valueOf(coordinatorList.size()));
+//            this.latlngs.add(new LatLng(ele.getLat(),ele.getLon()));
+//        }
+//
+//        return new LatLng(latlngs.get(0).latitude,latlngs.get(0).longitude);
 
-        for (LatLng point : latlngs) {
-            options.position(point);
-            options.title("1");
-            options.snippet("Person");
-            googleMap.addMarker(options);
-        }
-
-
+        return coordinatorList;
 
     }
 }
