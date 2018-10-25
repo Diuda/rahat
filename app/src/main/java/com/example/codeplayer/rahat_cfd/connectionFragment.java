@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.bluetooth.BluetoothAdapter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -54,7 +55,7 @@ public class connectionFragment  extends Fragment {
 
 
     MainActivity act;
-
+    View previousSelectedItem;
 
     ArrayList<String> listItems=new ArrayList<String>();
     ArrayAdapter<String> adapter;
@@ -91,8 +92,18 @@ public class connectionFragment  extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 currentConnection = connectionsList.getItemAtPosition(i).toString();
 
+                if (previousSelectedItem!=null) {
+                    previousSelectedItem.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                }
+                previousSelectedItem=view;
+                view.setBackgroundColor(getResources().getColor(R.color.colorAccent));
             }
+
+
+
+
         });
+
         act.advertise();
         act.discover();
 
@@ -102,7 +113,7 @@ public class connectionFragment  extends Fragment {
         @Override
         public void onClick(View v) {
             Log.i("CFDPP","Mai chala");
-            act.connect(currentConnection);
+            act.connect(act.connectionNameToId.get(currentConnection));
 
 
         }
