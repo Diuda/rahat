@@ -24,7 +24,7 @@ public class AckParser {
         this.t1 = Long.parseLong(t1);
         this.t2 = Long.parseLong(t2);
         this.t3 = Long.parseLong(t3);
-        this.t4 = ( System.currentTimeMillis());
+        this.t4 = ( Math.abs(System.nanoTime()));
     }
     void  parseAckMessage(Payload payload){
 
@@ -49,7 +49,7 @@ public class AckParser {
         Log.i("TIME t4",t4.toString());
 
 
-        return (((t4-t3)+(t2-t1))*299792.458f)/2.0f;
+        return (((t4-t1)-(t3-t2))*0.299792458f)/2.0f;
     }
 
 }
