@@ -386,7 +386,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     // Automatically accept the connection on both sides.
 
                     Log.i("CODEFUNDO","Initiated connection");
-
+                    Snackbar.make(findViewById(R.id.parentLayout),"Initiating connection",Snackbar.LENGTH_SHORT);
                     mConnectionsClient.acceptConnection(endpointId, mPayloadCallback);
                 }
 
