@@ -76,23 +76,41 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     public void onMapReady(GoogleMap googleMap) {
 
         map = googleMap;
-        MainActivity act = (MainActivity)getActivity();
-        ArrayList<LocationData> latLng =  act.locationAnalyzer.plotData(getContext());
-
-        for(LocationData coords:latLng){
-
-            LatLng pos = new LatLng(coords.getLat(),coords.getLon());
+//        MainActivity act = (MainActivity)getActivity();
+//        assert act != null;
+//        ArrayList<LocationData> latLng =  act.locationAnalyzer.plotData();
+//        Log.i("Something", String.valueOf(latLng.size()));
+//        for(LocationData coords:latLng){
+//
+            LatLng pos = new LatLng(13.3604,74.7829);
 
             map.addMarker(new MarkerOptions().position(pos).title("User"));
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos,15));
             map.addCircle(new CircleOptions()
                     .center(pos)
-                    .radius(coords.getDist())
-                    .strokeColor(Color.RED)
-                    .fillColor(Color.BLUE));
+                    .radius(15)
+                    .strokeColor(Color.RED));
+
+        LatLng pos2 = new LatLng(13.360198, 74.782882);
+
+        map.addMarker(new MarkerOptions().position(pos).title("User2"));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos2,15));
+        map.addCircle(new CircleOptions()
+                .center(pos2)
+                .radius(15)
+                .strokeColor(Color.RED));
+
+        LatLng pos3 = new LatLng(13.360305,74.782926);
+
+        map.addMarker(new MarkerOptions().position(pos).title("User3"));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos3,17));
+        map.addCircle(new CircleOptions()
+                .center(pos3)
+                .radius(15)
+                .strokeColor(Color.RED));
 
         }
-    }
+//    }
 
     @Override
     public void onLocationChanged(Location location) {
