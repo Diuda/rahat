@@ -11,24 +11,25 @@ android:id="@+id/connectionFragment">
         android:layout_width="336dp"
         android:layout_height="266dp"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="37dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="157dp"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="16dp" />
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/connectionrecylerview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2"
-        android:divider="#fff"
-        android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll"
-        tools:listitem="@layout/device_list"
-        >
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/connectionrecylerview"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_weight="2"-->
+        <!--android:divider="#fff"-->
+        <!--android:stackFromBottom="true"-->
+        <!--android:transcriptMode="alwaysScroll"-->
+        <!--tools:listitem="@layout/device_list"-->
+        <!--&gt;-->
 
-    </android.support.v7.widget.RecyclerView>
+    <!--</android.support.v7.widget.RecyclerView>-->
 
     <android.support.design.button.MaterialButton
         android:id="@+id/connect"
