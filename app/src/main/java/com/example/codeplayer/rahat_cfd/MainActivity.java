@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     connectionFragment cf;
     ConnectionsClient mConnectionsClient;
     Map<String,String> endpointUser ;
+    ArrayList<String> availableEndpoints;
     Map<String,Double> distanceMapper;
     ParsedMessagePayload parser;
     AckParser ackParser;
@@ -133,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         distanceMapper = new HashMap<>();
         currentActivity = this;
         locationData = "";
+        availableEndpoints = new ArrayList<>();
         locationAnalyzer = new LocationAnalyzer();
         connectionNameToId = new HashMap<>();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -154,11 +157,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         pager = findViewById(R.id.viewPager);
         tabs = findViewById(R.id.tabs);
         tabAdapter = new TabAdapter(getSupportFragmentManager(), this);
-        tabAdapter.addFragment(new connectionFragment(), "Connections", tabIcons[0]);
+        cf= new connectionFragment();
+        tabAdapter.addFragment(cf, "Connections", tabIcons[0]);
         tabAdapter.addFragment(new chatFragment(), "Chat", tabIcons[1]);
         tabAdapter.addFragment(new MapFragment(), "Map", tabIcons[2]);
         tabAdapter.addFragment(new GlobalChatFragment(), "Global", tabIcons[3]);
-
 
         pager.setAdapter(tabAdapter);
         tabs.setupWithViewPager(pager);
@@ -334,17 +337,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void onEndpointFound(
                         String endpointId, DiscoveredEndpointInfo discoveredEndpointInfo) {
                     Log.i("CODEFUNDO","FOUND ENDPOINT: " + endpointId);
-                    Fragment f;
-                    f = getSupportFragmentManager().findFragmentById(R.id.screen_area);
-                    if(f instanceof connectionFragment) {
-                        cf = (connectionFragment) getSupportFragmentManager().findFragmentById(R.id.screen_area);
-                        cf.listItems.add(discoveredEndpointInfo.getEndpointName());
-                        cf.adapter.notifyDataSetChanged();
+//                    Fragment f;
+//                    f = getSupportFragmentManager().findFragmentById(R.id.viewPager);
+//                    if(f instanceof connectionFragment) {
+//                        cf.listItems.add(discoveredEndpointInfo.getEndpointName());
+//                        cf.adapter.notifyDataSetChanged();
+//
+//                         }
 
-                         }
+                    availableEndpoints.add(discoveredEndpointInfo.getEndpointName());
+                        cf.conAdapter.updateList(availableEndpoints);
                          connectionNameToId.put(discoveredEndpointInfo.getEndpointName(),endpointId);
                          endpointUser.put(endpointId,discoveredEndpointInfo.getEndpointName());
-                        Log.i("ENDPOINTNAME",discoveredEndpointInfo.getEndpointName());
+
+                         connect(endpointId);
+                         Log.i("ENDPOINTNAME",discoveredEndpointInfo.getEndpointName());
                     Log.i("ENDPOINTNAME",deviceName);
                     Toast.makeText(getApplicationContext(),"Found new user in vicinity!",Toast.LENGTH_SHORT).show();
 
@@ -355,6 +362,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 @Override
                 public void onEndpointLost(String endpointId) {
+                    availableEndpoints.remove(endpointUser.get(endpointId));
+                    cf.conAdapter.updateList(availableEndpoints);
                     // A previously discovered endpoint has gone away.
                     Log.i("CODEFUNDO"," ENDPOINT LOST: " + endpointId);
                 }
@@ -379,7 +388,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     // Automatically accept the connection on both sides.
 
                     Log.i("CODEFUNDO","Initiated connection");
-
+                    Snackbar.make(findViewById(R.id.parentLayout),"Initiating connection",Snackbar.LENGTH_SHORT);
                     mConnectionsClient.acceptConnection(endpointId, mPayloadCallback);
                 }
 
@@ -391,10 +400,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             Log.i("CODEFUNDO","SUCCESFFULL connection");
 
                             connectedList.add(endpointId);
-                            chatFragment cft = new chatFragment();
-                            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.screen_area,cft,"FragmentTAG");
-                            ft.commit();
+                            Snackbar.make(findViewById(R.id.parentLayout),"Now connected to: "+ endpointUser.get(endpointId),Snackbar.LENGTH_SHORT).show();
+//                            chatFragment cft = new chatFragment();
+//                            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                            ft.replace(R.id.screen_area,cft,"FragmentTAG");
+//                            ft.commit();
 
 
                             // We're connected! Can now start sending and receiving data.
@@ -623,7 +633,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 Log.i("LocationTag","Dispatched time message");
 
-                String currentTime =  Long.toString( System.currentTimeMillis());
+                String currentTime =  Long.toString( Math.abs(System.nanoTime()));
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString+"#"+parser.getSendStamp()+"#"+parser.getReceiveStamp()+"#"+currentTime).getBytes("UTF-8")));
             }
             //Send Location
@@ -636,7 +646,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //Distance Request message
             else if(messageType==3){
 
-                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+ "#" +  System.currentTimeMillis()).getBytes("UTF-8")));
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+ "#" +  Math.abs(System.nanoTime())).getBytes("UTF-8")));
 
             }
 
