@@ -478,7 +478,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                                     Log.i("COORDS","Coordinates ready");
 
-                                    sendData(String.format("%s#%s#%s", lat, lon, distance),ct.messageAdapter,endpointConnection,5);
+                                    sendData(String.format("%s#%s#%s", lat, lon, distance),endpointConnection,5);
                                 }
                             });
 
@@ -501,7 +501,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         //Distance Request message
                         else if(messageType==3){
 
-                            sendData(null,ct.messageAdapter,endpointConnection,1);
+                            Log.v("MTAG","Message 3 requested");
+
+                            sendData(null,endpointConnection,1);
 
                             return;
                         }
@@ -511,7 +513,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
                             Log.i("LocationTag","Received request,dispatching time");
-                            sendData(null,ct.messageAdapter,endpointConnection,3);
+                            sendData(null,endpointConnection,3);
                             return;
 
                         }
@@ -527,7 +529,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             if(coordsReceived==1) {
 
-                                sendData(locationData, ct.messageAdapter, connectedList, 6);
+                                sendData(locationData, connectedList, 6);
                                 locationData = "";
                                 coordsReceived=0;
                             }
@@ -571,9 +573,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                         Log.i("CFDPPP",connections.toString());
 
-                        ct.messageAdapter.add(new Message(parsedData,new MemberData(endpointUser.get(endpointId), "Red"),0));
                         if(!connections.isEmpty())
-                        sendData(parsedData,ct.messageAdapter,connections,0);
+                        sendData(parsedData,connections,0);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -588,7 +589,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             };
 
-    protected  void sendData(String data,MessageAdapter messageAdapter,Set<String> connectedList,int messageType){
+    protected  void sendData(String data,Set<String> connectedList,int messageType){
 
 
         try {
@@ -647,6 +648,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             //Distance Request message
             else if(messageType==3){
+
+                Toast.makeText(getApplicationContext(),"Reqiest aayi",Toast.LENGTH_SHORT);
 
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+ "#" +  Math.abs(System.nanoTime())).getBytes("UTF-8")));
 

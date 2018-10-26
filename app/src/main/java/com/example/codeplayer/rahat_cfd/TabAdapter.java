@@ -45,6 +45,8 @@ public class TabAdapter extends FragmentStatePagerAdapter {
         return mFragmentList.size();
     }
     public View getTabView(int position) {
+
+
         View view = LayoutInflater.from(context).inflate(R.layout.custom_tab, null);
         TextView tabTextView = view.findViewById(R.id.tabTextView);
         tabTextView.setText(mFragmentTitleList.get(position));

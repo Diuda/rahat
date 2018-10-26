@@ -48,7 +48,7 @@ public class LocationAnalyzer {
         }
     }
 
-    public ArrayList<LocationData> plotData(Context context){
+    public ArrayList<LocationData> plotData(){
 
 //        if(this.coordinatorList.size()==0){
 //            Toast.makeText(context,"No coordinates available",Toast.LENGTH_LONG).show();
