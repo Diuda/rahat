@@ -24,11 +24,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?actionBarSize"
+        app:tabMaxWidth="0dp"
         app:tabGravity="fill"
         app:tabIndicatorColor="#FFFFFF"
         app:tabIndicatorHeight="4dp"
+        app:tabMode="scrollable"
         app:tabBackground="@color/colorPrimary"
-        app:tabMode="fixed">
+
+        >
 
 
 
