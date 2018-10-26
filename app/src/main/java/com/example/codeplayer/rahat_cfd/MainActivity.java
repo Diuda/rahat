@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -397,10 +398,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             Log.i("CODEFUNDO","SUCCESFFULL connection");
 
                             connectedList.add(endpointId);
-                            chatFragment cft = new chatFragment();
-                            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.screen_area,cft,"FragmentTAG");
-                            ft.commit();
+                            Snackbar.make(findViewById(R.id.parentLayout),"Now connected to: "+ endpointUser.get(endpointId),Snackbar.LENGTH_SHORT).show();
+//                            chatFragment cft = new chatFragment();
+//                            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                            ft.replace(R.id.screen_area,cft,"FragmentTAG");
+//                            ft.commit();
 
 
                             // We're connected! Can now start sending and receiving data.
