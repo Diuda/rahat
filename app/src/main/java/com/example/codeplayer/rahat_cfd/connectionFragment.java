@@ -116,6 +116,8 @@ public class connectionFragment  extends Fragment {
 //
 //        });
 
+
+
         act.advertise();
         act.discover();
 
