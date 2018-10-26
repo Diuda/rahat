@@ -349,7 +349,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         cf.conAdapter.updateList(availableEndpoints);
                          connectionNameToId.put(discoveredEndpointInfo.getEndpointName(),endpointId);
                          endpointUser.put(endpointId,discoveredEndpointInfo.getEndpointName());
-                        Log.i("ENDPOINTNAME",discoveredEndpointInfo.getEndpointName());
+
+                         connect(endpointId);
+                         Log.i("ENDPOINTNAME",discoveredEndpointInfo.getEndpointName());
                     Log.i("ENDPOINTNAME",deviceName);
                     Toast.makeText(getApplicationContext(),"Found new user in vicinity!",Toast.LENGTH_SHORT).show();
 
@@ -631,7 +633,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 Log.i("LocationTag","Dispatched time message");
 
-                String currentTime =  Long.toString( System.currentTimeMillis());
+                String currentTime =  Long.toString( Math.abs(System.nanoTime()));
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString+"#"+parser.getSendStamp()+"#"+parser.getReceiveStamp()+"#"+currentTime).getBytes("UTF-8")));
             }
             //Send Location
@@ -644,7 +646,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //Distance Request message
             else if(messageType==3){
 
-                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+ "#" +  System.currentTimeMillis()).getBytes("UTF-8")));
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+ "#" +  Math.abs(System.nanoTime())).getBytes("UTF-8")));
 
             }
 
