@@ -85,7 +85,7 @@ public class connectionFragment  extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         act= ((MainActivity)getActivity());
 
-        connectionRecyclerView = view.findViewById(R.id.connectionrecylerview);
+//        connectionRecyclerView = view.findViewById(R.id.connectionrecylerview);
 
         connect  = view.findViewById(R.id.connect);
         connect.setOnClickListener(makeConnectionListener);
