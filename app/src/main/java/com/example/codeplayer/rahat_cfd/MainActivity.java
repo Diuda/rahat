@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     connectionFragment cf;
     ConnectionsClient mConnectionsClient;
     Map<String,String> endpointUser ;
+    ArrayList<String> availableEndpoints;
     Map<String,Double> distanceMapper;
     ParsedMessagePayload parser;
     AckParser ackParser;
@@ -133,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         distanceMapper = new HashMap<>();
         currentActivity = this;
         locationData = "";
+        availableEndpoints = new ArrayList<>();
         locationAnalyzer = new LocationAnalyzer();
         connectionNameToId = new HashMap<>();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -154,11 +156,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         pager = findViewById(R.id.viewPager);
         tabs = findViewById(R.id.tabs);
         tabAdapter = new TabAdapter(getSupportFragmentManager(), this);
-        tabAdapter.addFragment(new connectionFragment(), "Connections", tabIcons[0]);
+        cf= new connectionFragment();
+        tabAdapter.addFragment(cf, "Connections", tabIcons[0]);
         tabAdapter.addFragment(new chatFragment(), "Chat", tabIcons[1]);
         tabAdapter.addFragment(new MapFragment(), "Map", tabIcons[2]);
         tabAdapter.addFragment(new GlobalChatFragment(), "Global", tabIcons[3]);
-
 
         pager.setAdapter(tabAdapter);
         tabs.setupWithViewPager(pager);
@@ -334,14 +336,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void onEndpointFound(
                         String endpointId, DiscoveredEndpointInfo discoveredEndpointInfo) {
                     Log.i("CODEFUNDO","FOUND ENDPOINT: " + endpointId);
-                    Fragment f;
-                    f = getSupportFragmentManager().findFragmentById(R.id.screen_area);
-                    if(f instanceof connectionFragment) {
-                        cf = (connectionFragment) getSupportFragmentManager().findFragmentById(R.id.screen_area);
-                        cf.listItems.add(discoveredEndpointInfo.getEndpointName());
-                        cf.adapter.notifyDataSetChanged();
+//                    Fragment f;
+//                    f = getSupportFragmentManager().findFragmentById(R.id.viewPager);
+//                    if(f instanceof connectionFragment) {
+//                        cf.listItems.add(discoveredEndpointInfo.getEndpointName());
+//                        cf.adapter.notifyDataSetChanged();
+//
+//                         }
 
-                         }
+                    availableEndpoints.add(discoveredEndpointInfo.getEndpointName());
+                        cf.conAdapter.updateList(availableEndpoints);
                          connectionNameToId.put(discoveredEndpointInfo.getEndpointName(),endpointId);
                          endpointUser.put(endpointId,discoveredEndpointInfo.getEndpointName());
                         Log.i("ENDPOINTNAME",discoveredEndpointInfo.getEndpointName());
@@ -355,6 +359,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 @Override
                 public void onEndpointLost(String endpointId) {
+                    availableEndpoints.remove(endpointUser.get(endpointId));
+                    cf.conAdapter.updateList(availableEndpoints);
                     // A previously discovered endpoint has gone away.
                     Log.i("CODEFUNDO"," ENDPOINT LOST: " + endpointId);
                 }
