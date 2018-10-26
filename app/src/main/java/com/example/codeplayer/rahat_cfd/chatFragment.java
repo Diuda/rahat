@@ -43,7 +43,6 @@ import cz.msebera.android.httpclient.Header;
 public class chatFragment extends Fragment {
 
     private EditText messageToSend;
-    protected MessageAdapter messageAdapter;
     final private String SERVICE_ID = "RAHAT_CFD";
     private ListView messagesView;
     private ImageButton sendButton;
@@ -126,7 +125,7 @@ public class chatFragment extends Fragment {
 
             String message = messageToSend.getText().toString();
             messageToSend.setText("");
-            act.sendData(message, messageAdapter, null, 0);
+            act.sendData(message, null, 0);
 
             //Logic to send message
 
@@ -138,7 +137,7 @@ public class chatFragment extends Fragment {
         public void onClick(View v) {
 
 
-            act.sendData(null,messageAdapter,act.connectedList,4);
+            act.sendData(null,act.connectedList,4);
             Snackbar.make(v.getRootView(),"SOS initiated",Snackbar.LENGTH_SHORT).show();
 
 
@@ -170,7 +169,7 @@ public class chatFragment extends Fragment {
             String lat  = Double.toString(location.getLatitude());
             String lon  = Double.toString(location.getLongitude());
 
-            act.sendData(lat+"#"+lon, messageAdapter, null, 2);
+            act.sendData(lat+"#"+lon, null, 2);
             lm.removeUpdates(mLocationListener);
             lm = null;
         }
