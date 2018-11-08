@@ -70,6 +70,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -480,6 +481,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             ackParser.parseAckMessage(payload);
                              final double distance = ackParser.findDistance();
+                             sendData(Double.toString(distance),endpointConnection,0);
                              Log.i("Received Distance",Double.toString(distance));
                             LatLong.setListener(new CoordinatesReadyListener() {
                                 @Override
@@ -541,8 +543,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 sendData(locationData, connectedList, 6);
                                 locationData = "";
                                 coordsReceived=0;
+                                return;
                             }
-                            return;
+
 
                         }
                         else if(messageType==6){
@@ -562,8 +565,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         //If not an ack send ack
                         String parsedData = parser.getData();
+                        String messageUUID = parser.getMessageUUID();
+                        List<String> idList = messageViewModel.getIdList();
+                        if(idList.contains(messageUUID)){
+                            Log.i("MSGRELAY","Already have this message!");
+                            return;
+                        }
 
-                        messageStruct messageStruct = new messageStruct(UUID.randomUUID().toString(),endpointUser.get(endpointId),parsedData,1);
+                        messageStruct messageStruct = new messageStruct(messageUUID,endpointUser.get(endpointId),parsedData,1);
                         messageViewModel.insert(messageStruct);
 
 
@@ -623,13 +632,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 messageStruct messageStruct = new messageStruct(uuid,deviceName,data,messageType);
                 messageViewModel.insert(messageStruct);
-                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString + "#" + data).getBytes("UTF-8")));
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString + "#" + uuid+"#"+ data).getBytes("UTF-8")));
 
 //                messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
                 Log.i("CFDPP","Message Adapter completed");
 
                 //Change this
-                if(false){
+                if(isNetworkAvailable()){
 
                     try {
                         sendRestMessages(uuid, deviceName, data);
@@ -647,6 +656,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 String currentTime =  Long.toString( Math.abs(System.nanoTime()));
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString+"#"+parser.getSendStamp()+"#"+parser.getReceiveStamp()+"#"+currentTime).getBytes("UTF-8")));
+                return;
             }
             //Send Location
             else if(messageType==2){
@@ -654,6 +664,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString+"#"+data).getBytes("UTF-8")));
                 messageStruct messageStruct = new messageStruct(uuid,deviceName,data.split("#")[0]+","+data.split("#")[1],messageType);
                 messageViewModel.insert(messageStruct);
+
+                return;
             }
             //Distance Request message
             else if(messageType==3){
@@ -662,6 +674,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+ "#" +  Math.abs(System.nanoTime())).getBytes("UTF-8")));
 
+                return;
             }
 
             //SOS Location Broadcast
@@ -671,18 +684,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.i("LocationTag","SOS request received");
 
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+"#").getBytes("UTF-8")));
+                return;
             }
             //Request relay of coordinates
 
             else if(messageType==5){
                 Log.i("Location Tag","Requesting relay of coordinates");
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+"#"+data).getBytes("UTF-8")));
-
+                return;
             }
             else if(messageType==6){
                 Log.i("LocationTag","Sending coordinates");
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList),Payload.fromBytes((messageTypeString+"#"+data).getBytes("UTF-8")));
 
+                return;
             }
         } catch (UnsupportedEncodingException e) {
 

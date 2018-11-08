@@ -113,7 +113,7 @@ public class GlobalChatFragment extends Fragment {
 
                         JSONObject data = timeline.getJSONObject(i);
                         String usermessage = data.getString("message");
-                        Toast.makeText(getContext(), usermessage, Toast.LENGTH_LONG).show();
+//                        Toast.makeText(getContext(), usermessage, Toast.LENGTH_LONG).show();
 
                         messageStructList.add(i, new messageStruct(data.getString("uuid"), data.getString("username"), data.getString("message"), 0));
 

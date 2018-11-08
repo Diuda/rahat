@@ -11,16 +11,21 @@ public class MessageRepo {
 
     private MessageDao messageDao;
     private LiveData<List<messageStruct>> mAllMessages;
+    private List<String> msgIdList;
 
     MessageRepo(Application application) {
         AppDatabase db = AppDatabase.getDatabase(application);
         messageDao = db.MessageDao();
         mAllMessages = messageDao.getAllMessages();
-
+        msgIdList = messageDao.getMessageIdList();
     }
 
     LiveData<List<messageStruct>> getmAllMessages() {
         return mAllMessages;
+    }
+
+    List<String> getIdList() {
+        return msgIdList;
     }
 
     public void insert(messageStruct messageStruct) {
