@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -98,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     LocationAnalyzer locationAnalyzer;
     String locationData;
 
+    final Handler handler = new Handler();
     protected Set<String> connectedList = new HashSet<>();
 
 
@@ -391,7 +393,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     Log.i("CODEFUNDO","Initiated connection");
                     Snackbar.make(findViewById(R.id.parentLayout),"Initiating connection",Snackbar.LENGTH_SHORT);
-                    mConnectionsClient.acceptConnection(endpointId, mPayloadCallback);
+
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mConnectionsClient.acceptConnection(endpointId, mPayloadCallback);
+                        }
+                    }, 5000);
+
                 }
 
                 @Override
