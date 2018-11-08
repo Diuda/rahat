@@ -16,11 +16,14 @@ public class ParsedMessagePayload {
         private String data;
         private  String sendStamp;
         private String receiveStamp;
-
+        private String messageUUID;
         private int messageType;
 
+    public String getMessageUUID() {
+        return messageUUID;
+    }
 
-        public String getData(){
+    public String getData(){
             return this.data;
         }
 
@@ -79,7 +82,9 @@ public class ParsedMessagePayload {
                     }
 
                     if(this.messageType==0) {
-                        this.data = parsedPayload[1];
+                        this.data = parsedPayload[2];
+                        this.messageUUID=parsedPayload[1];
+
                     }
                     //ACK Message
                     if(this.messageType==1)
