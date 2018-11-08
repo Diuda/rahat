@@ -88,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     String deviceName = myDevice.getName();
     FragmentManager fm = getSupportFragmentManager();
     connectionFragment cf;
+    LatLong latlong;
+    LocationParser locationParser;
     ConnectionsClient mConnectionsClient;
     Map<String,String> endpointUser ;
     ArrayList<String> availableEndpoints;
@@ -131,7 +133,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //-----------------------------------------------------------
         //--------__ Instantiating Objects__---------------------------------
-
+        locationParser = new LocationParser();
+        latlong = new LatLong();
         messageViewModel = ViewModelProviders.of(this).get(MessageViewModel.class);
         mConnectionsClient =  Nearby.getConnectionsClient(this);
         endpointUser = new HashMap<String, String>();
@@ -474,7 +477,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         //---------------------------------------------------
 
                         //Parsing initially to check for ACK
-                        parser.parseData(payload);
+                        parser.parseData(payload,locationParser);
                         int messageType = parser.getMessageType();
 
                         if(messageType==1){
@@ -482,9 +485,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             ackParser.parseAckMessage(payload);
                              final double distance = ackParser.findDistance();
-                             sendData(Double.toString(distance),endpointConnection,0);
+                             sendData(Double.toString(distance)+"m",endpointConnection,0);
                              Log.i("Received Distance",Double.toString(distance));
-                            LatLong.setListener(new CoordinatesReadyListener() {
+                            latlong.setListener(new CoordinatesReadyListener() {
                                 @Override
                                 public void onCoordinatesReady(String lat , String lon) {
 
@@ -494,7 +497,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 }
                             });
 
-                            LatLong.getCurrentLocation(currentActivity,getApplicationContext());
+                            latlong.getCurrentLocation(currentActivity,getApplicationContext());
 
                             Log.i("DISTANCECFD",Double.toString(distance));
                             //Add code to calculate Mean and Variance
@@ -504,7 +507,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                         else if (messageType==2){
 
-                            messageStruct messageStruct = new messageStruct(UUID.randomUUID().toString(),endpointUser.get(endpointId),LocationParser.getLatitude()+","+LocationParser.getLongitude(),2);
+                            messageStruct messageStruct = new messageStruct(UUID.randomUUID().toString(),endpointUser.get(endpointId),locationParser.getLatitude()+","+locationParser.getLongitude(),2);
                             messageViewModel.insert(messageStruct);
 
                             return;
@@ -539,7 +542,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             Log.i("FUCKTHISSHIT",locationData);
 
-                            if(coordsReceived==1) {
+                            if(coordsReceived==3) {
 
                                 sendData(locationData, connectedList, 6);
                                 locationData = "";
@@ -593,7 +596,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Log.i("CFDPPP",connections.toString());
 
                         if(!connections.isEmpty()) {
-                            isRelay=true;
+
                             sendData(parsedData, connections, 0);
                         }
                     } catch (Exception e) {
@@ -633,12 +636,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             if(messageType==0) {
 
-                if(!isRelay) {
+
                     messageStruct messageStruct = new messageStruct(uuid, deviceName, data, messageType);
                     messageViewModel.insert(messageStruct);
 
-                }
-                isRelay=false;
+
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString + "#" + uuid+"#"+ data).getBytes("UTF-8")));
 
 //                messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
