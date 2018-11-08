@@ -2,6 +2,7 @@ package com.example.codeplayer.rahat_cfd;
 
 import android.Manifest;
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -12,11 +13,13 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -400,7 +403,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         public void run() {
                             mConnectionsClient.acceptConnection(endpointId, mPayloadCallback);
                         }
-                    }, 5000);
+                    }, 200);
 
                 }
 
@@ -566,11 +569,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         //If not an ack send ack
                         String parsedData = parser.getData();
                         String messageUUID = parser.getMessageUUID();
-                        List<String> idList = messageViewModel.getIdList();
-                        if(idList.contains(messageUUID)){
-                            Log.i("MSGRELAY","Already have this message!");
-                            return;
-                        }
+                        //List<String> idList = messageViewModel.getIdList();
+//                        messageViewModel = ViewModelProviders.of((FragmentActivity) currentActivity).get(MessageViewModel.class);
+//                        messageViewModel.getIdList().observe((FragmentActivity)currentActivity , new Observer<List<String>>() {
+//                            @Override
+//                            public void onChanged(@Nullable List<String> strings) {
+//                                if(strings.contains(messageUUID)){
+//                                    Log.i("MSGRELAY","Already have this message!");
+//                                    Toast.makeText(getApplicationContext(), "Paddy rocks", Toast.LENGTH_SHORT).show();
+//                                    return;
+//                                }
+//
+//                            }
+//                        });
+
+
+
 
                         messageStruct messageStruct = new messageStruct(messageUUID,endpointUser.get(endpointId),parsedData,1);
                         messageViewModel.insert(messageStruct);
