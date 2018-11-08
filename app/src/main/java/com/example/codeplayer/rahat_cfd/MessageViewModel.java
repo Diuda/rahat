@@ -18,10 +18,7 @@ public class MessageViewModel extends AndroidViewModel {
         super(application);
         messageRepo = new MessageRepo(application);
         mAllMessage = messageRepo.getmAllMessages();
-        for(messageStruct ele :messageRepo.getIdList()){
-
-            msgIdList.add(ele.getMessageid());
-        }
+        msgIdList = messageRepo.getIdList();
     }
 
     LiveData<List<messageStruct>> getmAllMessage() {
