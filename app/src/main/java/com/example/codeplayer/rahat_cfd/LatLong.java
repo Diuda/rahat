@@ -12,20 +12,18 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-abstract public class LatLong {
+ public class LatLong {
 
 
-    private static String currentLong;
-    private static String currentLat;
-    private static LocationManager lm;
-    private static CoordinatesReadyListener listener;
+     private  LocationManager lm;
+    private  CoordinatesReadyListener listener;
 
-    public static void setListener(CoordinatesReadyListener coordsListener){
+    public  void setListener(CoordinatesReadyListener coordsListener){
         listener = coordsListener;
     }
 
 
-    public static void getCurrentLocation(Activity act, Context context) {
+    public  void getCurrentLocation(Activity act, Context context) {
 
 
         lm = (LocationManager) act.getSystemService(Context.LOCATION_SERVICE);
@@ -47,18 +45,18 @@ abstract public class LatLong {
 
 
     }
-        private final static LocationListener mLocationListener = new LocationListener() {
+        private final LocationListener mLocationListener = new LocationListener() {
             @Override
             public void onLocationChanged(final Location location) {
 
                 Log.i("LocationTag","Location changed");
 
-                currentLat  = Double.toString(location.getLatitude());
-                currentLong  = Double.toString(location.getLongitude());
+                String currentLat = Double.toString(location.getLatitude());
+                String currentLong = Double.toString(location.getLongitude());
 
                 lm.removeUpdates(mLocationListener);
                 lm = null;
-                listener.onCoordinatesReady(currentLat,currentLong);
+                listener.onCoordinatesReady(currentLat, currentLong);
 
             }
 

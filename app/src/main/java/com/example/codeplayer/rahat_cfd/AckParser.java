@@ -49,7 +49,7 @@ public class AckParser {
         Log.i("TIME t4",t4.toString());
 
 
-        return (((t4-t1)-(t3-t2))*0.299792458f)/2.0f;
+        return (((t4-t1)-(t3-t2))*0.299792458f)/200000000.0f;
     }
 
 }
