@@ -11,15 +11,24 @@ public class MessageViewModel extends AndroidViewModel {
     private MessageRepo messageRepo;
 
     private LiveData<List<messageStruct>> mAllMessage;
+    private List<String> msgIdList;
+
 
     public MessageViewModel(Application application) {
         super(application);
         messageRepo = new MessageRepo(application);
         mAllMessage = messageRepo.getmAllMessages();
+        for(messageStruct ele :messageRepo.getIdList()){
+
+            msgIdList.add(ele.getMessageid());
+        }
     }
 
     LiveData<List<messageStruct>> getmAllMessage() {
         return mAllMessage;
+    }
+    List<String> getIdList() {
+        return msgIdList;
     }
 
 

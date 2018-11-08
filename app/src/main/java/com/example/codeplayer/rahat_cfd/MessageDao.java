@@ -13,7 +13,8 @@ public interface MessageDao {
     @Query("Select * from messageStruct")
     LiveData<List<messageStruct>> getAllMessages();
 
-
+    @Query("Select messageid from messageStruct")
+    List<messageStruct> getMessageIdList();
 
     @Insert
     void insertAll(messageStruct messageStruct);

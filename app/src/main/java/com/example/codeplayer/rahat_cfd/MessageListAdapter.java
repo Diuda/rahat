@@ -88,7 +88,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             String latitude = coords[0];
             String longitude = coords[1];
-            String label = "Walia Chutiya hai";
+            String label = "Victim Location";
             String uriBegin = "geo:" + latitude + "," + longitude;
             String query = latitude + "," + longitude + "(" + label + ")";
             String encodedQuery = Uri.encode(query);
