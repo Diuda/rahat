@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ParsedMessagePayload parser;
     AckParser ackParser;
     Activity currentActivity;
+    boolean isRelay = false;
     int coordsReceived;
     Map<String,String> connectionNameToId;
     LocationAnalyzer locationAnalyzer;
@@ -392,7 +393,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final ConnectionLifecycleCallback mConnectionLifecycleCallback =
             new ConnectionLifecycleCallback() {
                 @Override
-                public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
+                public void onConnectionInitiated(final String endpointId, ConnectionInfo connectionInfo) {
                     // Automatically accept the connection on both sides.
 
                     Log.i("CODEFUNDO","Initiated connection");
@@ -605,8 +606,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                         Log.i("CFDPPP",connections.toString());
 
-                        if(!connections.isEmpty())
-                        sendData(parsedData,connections,0);
+                        if(!connections.isEmpty()) {
+                            isRelay=true;
+                            sendData(parsedData, connections, 0);
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -644,8 +647,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             if(messageType==0) {
 
-                messageStruct messageStruct = new messageStruct(uuid,deviceName,data,messageType);
-                messageViewModel.insert(messageStruct);
+                if(!isRelay) {
+                    messageStruct messageStruct = new messageStruct(uuid, deviceName, data, messageType);
+                    messageViewModel.insert(messageStruct);
+
+                }
+                isRelay=false;
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString + "#" + uuid+"#"+ data).getBytes("UTF-8")));
 
 //                messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
