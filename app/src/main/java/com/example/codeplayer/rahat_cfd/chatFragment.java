@@ -139,6 +139,7 @@ public class chatFragment extends Fragment {
 
             String message = messageToSend.getText().toString();
             messageToSend.setText("");
+            act.isRelay=false;
             act.sendData(message, null, 0);
 
             //Logic to send message

@@ -10,10 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ConnectionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -22,6 +25,8 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     int position = -1;
     private LayoutInflater layoutInflater;
     ArrayList <String> ConnectionsNameList = new ArrayList<>();
+    Set<String> connectedList = new HashSet<>();
+
     public ConnectionListAdapter(Context context) {
 
             layoutInflater = LayoutInflater.from(context);
@@ -59,7 +64,15 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         String name = ConnectionsNameList.get(i);
         connectionItemViewHolder itemViewHolder = (connectionItemViewHolder) viewHolder;
+
+        if(connectedList.contains(name)){
+
+            itemViewHolder.connectionName.setText("Connected to: "+name);
+
+        }
+        else
         itemViewHolder.connectionName.setText(name);
+
         ((connectionItemViewHolder) viewHolder).cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,9 +86,18 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             ((connectionItemViewHolder) viewHolder).cardView.setBackgroundColor(R.color.colorAccent);
         }
 
+
+
+
     }
     public void updateList(ArrayList<String> newList){
         this.ConnectionsNameList = newList;
+        this.notifyDataSetChanged();
+    }
+
+    public void updateResultList(Set<String> newList){
+
+        this.connectedList = newList;
         this.notifyDataSetChanged();
     }
 

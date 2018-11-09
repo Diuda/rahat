@@ -35,7 +35,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, LocationListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     GoogleMap map;
     LocationManager lm;
@@ -85,12 +85,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         MainActivity act = (MainActivity)getActivity();
 //        assert act != null;
         ArrayList<LocationData> latLng =  act.locationAnalyzer.plotData();
-        Log.i("Something", String.valueOf(latLng.size()));
+        int i=0;
         for(LocationData coords:latLng){
 //
+            Log.i("Something", coords.getLat().toString() + "#"+coords.getLon().toString());
             LatLng pos = new LatLng(coords.getLat(),coords.getLon());
-
-            map.addMarker(new MarkerOptions().position(pos).title("User"));
+            i++;
+            map.addMarker(new MarkerOptions().position(pos).title("User"+i));
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos,15));
             map.addCircle(new CircleOptions()
                     .center(pos)
@@ -100,30 +101,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         }
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.i("MapChange","Triggered");
-
-        LatLng newLocation = new LatLng(location.getLatitude(),location.getLongitude());
-        map.clear();
-        Marker marker = map.addMarker(new MarkerOptions().position(newLocation).title("Me"));
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(newLocation,15));
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
     public void promptForGps(){
 
 

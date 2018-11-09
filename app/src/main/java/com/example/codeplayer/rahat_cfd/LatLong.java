@@ -41,7 +41,9 @@ import android.util.Log;
 
         Log.i("LocationTag","Getting current location for user");
 
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+       // lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+        Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        listener.onCoordinatesReady(Double.toString(loc.getLatitude()), Double.toString(loc.getLongitude()));
 
 
     }
@@ -56,7 +58,7 @@ import android.util.Log;
 
                 lm.removeUpdates(mLocationListener);
                 lm = null;
-                listener.onCoordinatesReady(currentLat, currentLong);
+
 
             }
 

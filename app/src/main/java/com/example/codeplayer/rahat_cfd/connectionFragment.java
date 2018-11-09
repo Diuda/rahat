@@ -93,7 +93,6 @@ public class connectionFragment  extends Fragment {
         connectionRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
 
-
         connect  = view.findViewById(R.id.connect);
         connect.setOnClickListener(makeConnectionListener);
 //        connectionsList = view.findViewById(R.id.connectionsList);
@@ -117,7 +116,8 @@ public class connectionFragment  extends Fragment {
 //        });
 
 
-
+        conAdapter.updateList(act.availableEndpoints);
+        conAdapter.updateResultList(act.connectedList);
         act.advertise();
         act.discover();
 
