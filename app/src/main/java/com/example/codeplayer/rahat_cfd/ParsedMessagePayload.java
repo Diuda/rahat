@@ -117,7 +117,7 @@ public class ParsedMessagePayload {
 
              void parseLocation(String[] data){
 
-                    Latitude = data[1];
-                    Longitude = data[2];
+                    Latitude = data[2];
+                    Longitude = data[3];
                 }
         }

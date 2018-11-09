@@ -84,6 +84,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     private MessageViewModel messageViewModel;
+    String uuid;
+
 
     BluetoothAdapter myDevice = BluetoothAdapter.getDefaultAdapter();
     String deviceName = myDevice.getName();
@@ -447,6 +449,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     // sent or received.
 
                     Log.i("CODEFUNDO","Disconnected connection");
+                    Toast.makeText(getApplicationContext(),"Disconnceted from" + endpointUser.get(endpointId),Toast.LENGTH_SHORT).show();
+
+
+
 
 
                 }
@@ -487,8 +493,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             ackParser.parseAckMessage(payload);
                              final double distance = ackParser.findDistance();
-                             sendData(Double.toString(distance)+"m",endpointConnection,0);
-                             Log.i("Received Distance",Double.toString(distance));
+                             Log.i("ReceivedDistance",Double.toString(distance));
                             latlong.setListener(new CoordinatesReadyListener() {
                                 @Override
                                 public void onCoordinatesReady(String lat , String lon) {
@@ -538,19 +543,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         //Pass data to all peers
                         else if(messageType==5){
 
+                            Log.i("Message5",locationData);
                             coordsReceived++;
                             locationData+= new String(payload.asBytes(),"UTF-8");
                             locationData+="###";
 
+
                             Log.i("FUCKTHISSHIT",locationData);
 
-                            if(coordsReceived==3) {
+                            if(coordsReceived==2) {
 
                                 sendData(locationData, connectedList, 6);
                                 locationData = "";
                                 coordsReceived=0;
                                 return;
                             }
+
+                            return;
 
 
                         }
@@ -571,14 +580,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         //If not an ack send ack
                         String parsedData = parser.getData();
-                        String messageUUID = parser.getMessageUUID();
+                        uuid = parser.getMessageUUID();
                         List<String> idList = messageViewModel.getIdList();
-                        if(idList.contains(messageUUID)){
+                        if(idList.contains(uuid)){
                             Log.i("MSGRELAY","Already have this message!");
                             return;
                         }
 
-                        messageStruct messageStruct = new messageStruct(messageUUID,endpointUser.get(endpointId),parsedData,1);
+                        messageStruct messageStruct = new messageStruct(uuid,endpointUser.get(endpointId),parsedData,1);
                         messageViewModel.insert(messageStruct);
 
 
@@ -630,11 +639,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-
             String messageTypeString  = String.valueOf(messageType);
             Log.i("ACKVAL-SENDING",messageTypeString);
-            String uuid = UUID.randomUUID().toString();
-            //Send user message data
+            if(!isRelay) {
+                uuid = UUID.randomUUID().toString();
+            }
+
+             //Send user message data
 
             if(messageType==0) {
 
@@ -674,7 +685,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //Send Location
             else if(messageType==2){
 
-                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString+"#"+data).getBytes("UTF-8")));
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString+"#"+uuid+"#"+data).getBytes("UTF-8")));
                 messageStruct messageStruct = new messageStruct(uuid,deviceName,data.split("#")[0]+","+data.split("#")[1],messageType);
                 messageViewModel.insert(messageStruct);
 
