@@ -408,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         public void run() {
                             mConnectionsClient.acceptConnection(endpointId, mPayloadCallback);
                         }
-                    }, 5000);
+                    }, 500);
 
                 }
 
@@ -420,6 +420,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             Log.i("CODEFUNDO","SUCCESFFULL connection");
 
                             connectedList.add(endpointId);
+                            cf.conAdapter.updateResultList(connectedList);
                             Snackbar.make(findViewById(R.id.parentLayout),"Now connected to: "+ endpointUser.get(endpointId),Snackbar.LENGTH_SHORT).show();
 //                            chatFragment cft = new chatFragment();
 //                            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -430,6 +431,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             // We're connected! Can now start sending and receiving data.
                             break;
                         case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
+                            Snackbar.make(findViewById(R.id.parentLayout),"Connection rejected to: "+ endpointUser.get(endpointId),Snackbar.LENGTH_SHORT).show();
+//
 
                             Log.i("CODEFUNDO","Connection Rejected");
 
@@ -448,6 +451,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     // We've been disconnected from this endpoint. No more data can be
                     // sent or received.
 
+
+                    connectedList.remove(endpointId);
+                    cf.conAdapter.updateResultList(connectedList);
                     Log.i("CODEFUNDO","Disconnected connection");
                     Toast.makeText(getApplicationContext(),"Disconnceted from" + endpointUser.get(endpointId),Toast.LENGTH_SHORT).show();
 
