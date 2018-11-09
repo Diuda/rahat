@@ -18,6 +18,7 @@ public class ParsedMessagePayload {
         private String receiveStamp;
         private String messageUUID;
         private int messageType;
+        private String by;
 
     public String getMessageUUID() {
         return messageUUID;
@@ -38,6 +39,7 @@ public class ParsedMessagePayload {
         public int getMessageType(){
             return this.messageType;
         }
+        public String getBy(){return this.by;};
 
         ParsedMessagePayload(){
             data=null;
@@ -82,6 +84,7 @@ public class ParsedMessagePayload {
                     }
 
                     if(this.messageType==0) {
+                        this.by = parsedPayload[3];
                         this.data = parsedPayload[2];
                         this.messageUUID=parsedPayload[1];
 

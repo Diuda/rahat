@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FragmentManager fm = getSupportFragmentManager();
     connectionFragment cf;
     LatLong latlong;
+    String relayName="Relayed";
     LocationParser locationParser;
     ConnectionsClient mConnectionsClient;
     Map<String,String> endpointUser ;
@@ -593,7 +594,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             return;
                         }
 
-                        messageStruct messageStruct = new messageStruct(uuid,endpointUser.get(endpointId),parsedData,1);
+
+
+                        relayName = parser.getBy();
+
+                        messageStruct messageStruct = new messageStruct(uuid,relayName,parsedData,1);
                         messageViewModel.insert(messageStruct);
 
 
@@ -601,6 +606,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         //------------Relaying messages----------
 
                         Set<String> connections =  new HashSet<String>();
+
 
                         for (String connectionID: connectedList) {
 
@@ -660,9 +666,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     messageStruct messageStruct = new messageStruct(uuid, deviceName, data, messageType);
                     messageViewModel.insert(messageStruct);
                     isRelay=true;
+                    relayName=deviceName;
                 }
 
-                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString + "#" + uuid+"#"+ data).getBytes("UTF-8")));
+                mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString + "#" + uuid+"#"+ data+"#"+relayName).getBytes("UTF-8")));
 
 //                messageAdapter.add(new Message(data,new MemberData("Paddy", "Green"),true));
                 Log.i("CFDPP","Message Adapter completed");
