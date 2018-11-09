@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ParsedMessagePayload parser;
     AckParser ackParser;
     Activity currentActivity;
-    boolean isRelay = false;
+    boolean isRelay = true;
     int coordsReceived;
     Map<String,String> connectionNameToId;
     LocationAnalyzer locationAnalyzer;
@@ -638,10 +638,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             if(messageType==0) {
 
+                if(!isRelay) {
 
                     messageStruct messageStruct = new messageStruct(uuid, deviceName, data, messageType);
                     messageViewModel.insert(messageStruct);
-
+                    isRelay=true;
+                }
 
                 mConnectionsClient.sendPayload(new ArrayList<String>(connectedList), Payload.fromBytes((messageTypeString + "#" + uuid+"#"+ data).getBytes("UTF-8")));
 
