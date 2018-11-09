@@ -14,7 +14,7 @@ public interface MessageDao {
     LiveData<List<messageStruct>> getAllMessages();
 
     @Query("Select messageid from messageStruct")
-    LiveData<List<String>> getMessageIdList();
+    List<String> getMessageIdList();
 
     @Insert
     void insertAll(messageStruct messageStruct);

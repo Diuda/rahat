@@ -575,7 +575,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             Log.i("FUCKTHISSHIT",locationData);
 
-                            if(coordsReceived==2) {
+                            if(coordsReceived==3) {
 
                                 sendData(locationData, connectedList, 6);
                                 locationData = "";

@@ -11,7 +11,7 @@ public class MessageViewModel extends AndroidViewModel {
     private MessageRepo messageRepo;
 
     private LiveData<List<messageStruct>> mAllMessage;
-    private LiveData<List<String>> msgIdList;
+    private List<String> msgIdList;
 
 
     public MessageViewModel(Application application) {
@@ -24,7 +24,7 @@ public class MessageViewModel extends AndroidViewModel {
     LiveData<List<messageStruct>> getmAllMessage() {
         return mAllMessage;
     }
-    LiveData<List<String>> getIdList() {
+    List<String> getIdList() {
         return msgIdList;
     }
 

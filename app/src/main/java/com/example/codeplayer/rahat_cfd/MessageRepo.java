@@ -11,7 +11,7 @@ public class MessageRepo {
 
     private MessageDao messageDao;
     private LiveData<List<messageStruct>> mAllMessages;
-    private LiveData<List<String>> msgIdList;
+    private List<String> msgIdList;
 
     MessageRepo(Application application) {
         AppDatabase db = AppDatabase.getDatabase(application);
@@ -24,7 +24,7 @@ public class MessageRepo {
         return mAllMessages;
     }
 
-    LiveData<List<String>> getIdList() {
+    List<String> getIdList() {
         return msgIdList;
     }
 
