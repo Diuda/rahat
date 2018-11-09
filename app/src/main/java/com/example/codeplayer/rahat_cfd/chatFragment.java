@@ -47,12 +47,13 @@ public class chatFragment extends Fragment {
     private ListView messagesView;
     private ImageButton sendButton;
     private ImageButton gpsButton;
-    private RecyclerView recyclerView;
+    public RecyclerView recyclerView;
     MainActivity act;
     private MessageViewModel messageViewModel;
     LocationManager lm;
     List<messageStruct> messageStructList;
     private ImageButton sosButton;
+    public static int tempsize=0;
 
 
     @Nullable
@@ -87,6 +88,16 @@ public class chatFragment extends Fragment {
         sendButton.setOnClickListener(sendMessageListener);
         act = ((MainActivity) getActivity());
 
+        recyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+
+            public void onLayoutChange(View v, int left, int top, int right,int bottom, int oldLeft, int oldTop,int oldRight, int oldBottom)
+            {
+
+                recyclerView.scrollToPosition(tempsize-1);
+            }
+        });
+
 
         messageViewModel = ViewModelProviders.of(getActivity()).get(MessageViewModel.class);
 
@@ -102,6 +113,8 @@ public class chatFragment extends Fragment {
                     Log.i("databasek]chal", String.valueOf(messageStructs.size()));
 
                     adapter.setWords(messageStructs);
+                    tempsize = messageStructs.size();
+                    recyclerView.scrollToPosition(messageStructs.size()-1);
                 }
 
             }
@@ -116,6 +129,7 @@ public class chatFragment extends Fragment {
 
 
     }
+
 
 
     private View.OnClickListener sendMessageListener = new View.OnClickListener() {

@@ -45,7 +45,7 @@ public class ParsedMessagePayload {
             receiveStamp=null;
             messageType = 0;
         }
-        void parseData(Payload payload){
+        void parseData(Payload payload,LocationParser locationParser){
 
             String  payloadString = null;
             try {
@@ -92,7 +92,7 @@ public class ParsedMessagePayload {
 
                     if(this.messageType==2){
 
-                        LocationParser.parseLocation(parsedPayload);
+                        locationParser.parseLocation(parsedPayload);
 
                     }
 
@@ -102,20 +102,20 @@ public class ParsedMessagePayload {
 
         }
 
-        abstract class LocationParser{
+         class LocationParser{
 
-                private static String Longitude;
-                private static String Latitude;
+                private  String Longitude;
+                private  String Latitude;
 
-            public static String getLongitude() {
+            public  String getLongitude() {
                 return Longitude;
             }
 
-            public static String getLatitude() {
+            public  String getLatitude() {
                 return Latitude;
             }
 
-            static void parseLocation(String[] data){
+             void parseLocation(String[] data){
 
                     Latitude = data[1];
                     Longitude = data[2];
