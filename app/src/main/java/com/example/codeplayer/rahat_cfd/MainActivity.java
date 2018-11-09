@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     final Handler handler = new Handler();
     protected Set<String> connectedList = new HashSet<>();
 
+    protected Set<String> connectedNameList = new HashSet<>();
 
     private TabAdapter tabAdapter;
     private ViewPager pager;
@@ -409,7 +410,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         public void run() {
                             mConnectionsClient.acceptConnection(endpointId, mPayloadCallback);
                         }
-                    }, 500);
+                    }, 200);
 
                 }
 
@@ -421,7 +422,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             Log.i("CODEFUNDO","SUCCESFFULL connection");
 
                             connectedList.add(endpointId);
-                            cf.conAdapter.updateResultList(connectedList);
+                            connectedNameList.add(endpointUser.get(endpointId));
+
+                            cf.conAdapter.updateResultList(connectedNameList);
                             Snackbar.make(findViewById(R.id.parentLayout),"Now connected to: "+ endpointUser.get(endpointId),Snackbar.LENGTH_SHORT).show();
 //                            chatFragment cft = new chatFragment();
 //                            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -454,7 +457,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
                     connectedList.remove(endpointId);
-                    cf.conAdapter.updateResultList(connectedList);
+                    connectedNameList.remove(endpointUser.get(endpointId));
+                    cf.conAdapter.updateResultList(connectedNameList);
                     Log.i("CODEFUNDO","Disconnected connection");
                     Toast.makeText(getApplicationContext(),"Disconnceted from" + endpointUser.get(endpointId),Toast.LENGTH_SHORT).show();
 

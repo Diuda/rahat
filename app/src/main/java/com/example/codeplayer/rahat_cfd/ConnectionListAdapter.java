@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -25,6 +26,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private LayoutInflater layoutInflater;
     ArrayList <String> ConnectionsNameList = new ArrayList<>();
     Set<String> connectedList = new HashSet<>();
+
     public ConnectionListAdapter(Context context) {
 
             layoutInflater = LayoutInflater.from(context);
@@ -70,6 +72,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
         else
         itemViewHolder.connectionName.setText(name);
+
         ((connectionItemViewHolder) viewHolder).cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,6 +96,7 @@ public class ConnectionListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     public void updateResultList(Set<String> newList){
+
         this.connectedList = newList;
         this.notifyDataSetChanged();
     }
