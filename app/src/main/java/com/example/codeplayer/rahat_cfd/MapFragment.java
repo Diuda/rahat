@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,7 +68,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        promptForGps();
+
+        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(getContext(),Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        ) {
+            promptForGps();
+        }
 //        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
     }
@@ -119,6 +125,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 
     }
     public void promptForGps(){
+
+
         final AlertDialog.Builder builder =
                 new AlertDialog.Builder(getActivity());
         final String action = Settings.ACTION_LOCATION_SOURCE_SETTINGS;

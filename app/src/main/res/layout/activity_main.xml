@@ -5,10 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/background"
+
     android:id="@+id/parentLayout">
 
-    <include
-        layout="@layout/app_bar_main" />
+   <!-- <include
+        layout="@layout/app_bar_main" /> -->
 
     <!--<android.support.design.widget.NavigationView-->
         <!--android:id="@+id/nav_view"-->
@@ -23,15 +25,14 @@
     <android.support.design.widget.TabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/custom_tab_layout_height"
         android:minHeight="?actionBarSize"
-        app:tabMaxWidth="0dp"
-        app:tabGravity="fill"
-        app:tabIndicatorColor="#FFFFFF"
+        app:tabIndicatorColor="@color/tabind"
         app:tabIndicatorHeight="4dp"
+        app:tabMinWidth="100dp"
+        app:tabGravity="fill"
         app:tabMode="scrollable"
         app:tabBackground="@color/colorPrimary"
-
         >
 
 

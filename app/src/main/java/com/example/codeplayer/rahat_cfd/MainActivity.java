@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.ArraySet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,6 +45,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ToxicBakery.viewpager.transforms.RotateUpTransformer;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.nearby.Nearby;
@@ -129,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+       // getSupportActionBar().hide();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkPermission();
         }
@@ -178,9 +181,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tabAdapter.addFragment(new SelfHelpFragment(), "Self Help", tabIcons[4]);
 
         pager.setAdapter(tabAdapter);
+        pager.setPageTransformer(true, new RotateUpTransformer());
         tabs.setupWithViewPager(pager);
 
-        highLightCurrentTab(0);
+
+
 
 
 
@@ -192,7 +197,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        navigationView.setNavigationItemSelectedListener(this);
         coordsReceived = 0;
 
+        highLightCurrentTab(0);
+
     }
+
+
+
 
     private void highLightCurrentTab(int position) {
         for (int i = 0; i < tabs.getTabCount(); i++) {

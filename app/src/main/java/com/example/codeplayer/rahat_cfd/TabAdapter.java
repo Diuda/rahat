@@ -29,7 +29,7 @@ public class TabAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         return mFragmentList.get(position);
     }
-    public void addFragment(Fragment fragment, String title, int tabIcon) {
+    public void addFragment(Fragment fragment, String title,int tabIcon ) {
         mFragmentList.add(fragment);
         mFragmentTitleList.add(title);
         mFragmentIconList.add(tabIcon);
@@ -58,10 +58,10 @@ public class TabAdapter extends FragmentStatePagerAdapter {
         View view = LayoutInflater.from(context).inflate(R.layout.custom_tab, null);
         TextView tabTextView = view.findViewById(R.id.tabTextView);
         tabTextView.setText(mFragmentTitleList.get(position));
-        tabTextView.setTextColor(ContextCompat.getColor(context, R.color.yellow));
+        tabTextView.setTextColor(ContextCompat.getColor(context, R.color.text));
         ImageView tabImageView = view.findViewById(R.id.tabImageView);
         tabImageView.setImageResource(mFragmentIconList.get(position));
-        tabImageView.setColorFilter(ContextCompat.getColor(context, R.color.yellow), PorterDuff.Mode.SRC_ATOP);
+        tabImageView.setColorFilter(ContextCompat.getColor(context, R.color.text), PorterDuff.Mode.SRC_ATOP);
         return view;
     }
 
