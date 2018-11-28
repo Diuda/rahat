@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_connections"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Connections" />
+        <item
+            android:id="@+id/nav_chat"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Chat" />
+        <item
+            android:id="@+id/nav_location"
+            android:title="Location">
+
+        </item>
+        <item
+            android:id="@+id/nav_global_chat"
+            android:title="Global Chat Room"
+            >
+
+        </item>
+        <item
+            android:id="@+id/nav_safety_tips"
+            android:title="Guide and Tips">
+
+        </item>
+    </group>
+
+
+
+</menu>

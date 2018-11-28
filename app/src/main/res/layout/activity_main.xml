@@ -1,74 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    android:background="@drawable/background"
 
-    <TextView
-        android:id="@+id/response"
-        android:layout_width="108dp"
-        android:layout_height="31dp"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="47dp"
-        android:layout_marginBottom="6dp"
-        android:text="Response"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.95"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+    android:id="@+id/parentLayout">
 
-    <EditText
-        android:id="@+id/msgPayload"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button2"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="44dp"
-        android:ems="10"
-        android:hint="Enter Text:"
-        android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="384dp" />
+   <!-- <include
+        layout="@layout/app_bar_main" /> -->
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="23dp"
-        android:layout_marginBottom="41dp"
-        android:onClick="sendMsg"
-        android:text="Submit"
-        tools:layout_editor_absoluteX="248dp"
-        tools:layout_editor_absoluteY="384dp" />
+    <!--<android.support.design.widget.NavigationView-->
+        <!--android:id="@+id/nav_view"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="start"-->
+        <!--android:fitsSystemWindows="true"-->
+        <!--app:headerLayout="@layout/nav_header_main"-->
+        <!--app:menu="@menu/activity_main_drawer" />-->
 
-    <ListView
-        android:id="@+id/connectionsList"
-        android:layout_width="336dp"
-        android:layout_height="266dp"
-        android:layout_below="@+id/response"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="37dp"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="16dp" />
 
-    <Button
-        android:id="@+id/connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="129dp"
-        android:layout_marginBottom="100dp"
-        android:onClick="makeConnection"
-        android:text="Connect"
-        tools:layout_editor_absoluteX="126dp"
-        tools:layout_editor_absoluteY="322dp" />
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/custom_tab_layout_height"
+        android:minHeight="?actionBarSize"
+        app:tabIndicatorColor="@color/tabind"
+        app:tabIndicatorHeight="4dp"
+        app:tabMinWidth="100dp"
+        app:tabGravity="fill"
+        app:tabMode="scrollable"
+        app:tabBackground="@color/colorPrimary"
+        >
 
-</RelativeLayout>
+
+
+    </android.support.design.widget.TabLayout>
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </android.support.v4.view.ViewPager>
+
+</LinearLayout>

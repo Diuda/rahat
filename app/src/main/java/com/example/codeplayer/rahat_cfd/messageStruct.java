@@ -4,12 +4,17 @@ package com.example.codeplayer.rahat_cfd;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
+import java.util.UUID;
 
 @Entity
 public class messageStruct {
 
     @PrimaryKey
-    private int userid;
+    @NonNull
+    @ColumnInfo(name = "messageid")
+    private String messageid;
 
     @ColumnInfo(name = "user")
     private String username;
@@ -17,23 +22,28 @@ public class messageStruct {
     @ColumnInfo(name = "message")
     private String message;
 
-
-    public void setUserID(int id){
-        this.userid = id;
-    }
+    @ColumnInfo(name="messageType")
+    private int messageType;
 
 
-    public void setUserName(String username){
+
+
+    public messageStruct(String messageid, String username, String message, int messageType){
+        this.messageid = messageid;
         this.username = username;
-    }
-
-
-    public void setMessage(String message){
         this.message = message;
+        this.messageType = messageType;
+
     }
 
-    public int getUserid(){
-        return userid;
+    public int getMessageType() {
+        return messageType;
+    }
+
+
+
+    public String getMessageid(){
+        return messageid;
     }
 
     public String getUsername(){
